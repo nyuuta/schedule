@@ -28,5 +28,11 @@
                 <button type="submit">削除</button>
             </form>
         </div>
+        <div id="update-area">
+            <form id="form-update" method="" action="">
+                <input type="text" id="text-update" name="content"/>
+                <button type="submit">更新</button>
+            </form>
+        </div>
     </body>
 </html>

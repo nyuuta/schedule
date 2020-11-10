@@ -26,6 +26,7 @@ $(document).ready(function () {
 
         // フォーム表示(本来はモーダルウィンドウなど)
         $("#delete-area").show();
+        $("#update-area").show();
     });
 
     $('#form-delete').submit(function (e) {
@@ -44,6 +45,33 @@ $(document).ready(function () {
                 function (response) {
                     $("#delete-area").hide();
                     $(`[data-id='${id_selected}']`).remove();
+                },
+                // 失敗時
+                function (response) {
+
+                }
+        );
+    });
+
+    $('#form-update').submit(function (e) {
+
+        e.preventDefault();
+
+        let content = $("#text-update").val();
+
+        $.ajax({
+            url: "./updateSchedule.php",
+            data: {
+                title: content,
+                id: id_selected,
+            },
+            type: "POST",
+        })
+            .then(
+                // 成功時
+                function (response) {
+                    $("#update-area").hide();
+                    $(`[data-id='${id_selected}']`).text(content);
                 },
                 // 失敗時
                 function (response) {
@@ -85,4 +113,5 @@ $(document).ready(function () {
 
     $("#form-area").hide();
     $("#delete-area").hide();
+    $("#update-area").hide();
 });
