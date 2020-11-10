@@ -23,5 +23,10 @@
                 <button type="submit">追加</button>
             </form>
         </div>
+        <div id="delete-area">
+            <form id="form-delete" method="" action="">
+                <button type="submit">削除</button>
+            </form>
+        </div>
     </body>
 </html>
