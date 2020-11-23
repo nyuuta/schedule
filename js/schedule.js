@@ -9,8 +9,9 @@ $(document).ready(function () {
 
         date_selected = {
             date: $(this).attr("data-date"),
-            day: $(this).attr("data-day")
+            weekday: $(this).attr("data-weekday")
         }
+
         // フォーム表示(本来はモーダルウィンドウなど)
         $("#form-area").show();
 
@@ -84,7 +85,7 @@ $(document).ready(function () {
         
         let title = $("#text-title").val();
         let date = date_selected.date;
-        let day = date_selected.day;
+        let day = date_selected.weekday;
 
         e.preventDefault();
         $.ajax({
