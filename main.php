@@ -8,7 +8,10 @@
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
-        <script src="./js/calendar.js"></script>
+        <script src="./js/main.js"></script>
+        <script src="./js/Calendar.js"></script>
+        <script src="./js/EmptyCalendarElement.js"></script>
+        <script src="./js/CalendarElement.js"></script>
         <script src="./js/schedule.js"></script>
     </head>
     <body>
