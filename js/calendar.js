@@ -4,11 +4,15 @@ class Calendar {
      * @var {num} year_current
      * @var {num:0-11} month_current
      */
-
+    
+    // TODO: 祝日
+    
     constructor() {
         this.calendar = [];
         this.year_current;
         this.month_current;
+
+        this.MAP_WEEKDAY = ["日", "月", "火", "水", "木", "金", "土"];
     }
 
     /**
@@ -31,7 +35,10 @@ class Calendar {
 
         // 1日の曜日と最終日を取得
         let weekday_first = new Date(year, month).getDay();
-        let date_last = new Date(year, month, 0).getDate();
+        let date_last = new Date(year, month+1, 0).getDate();
+
+        console.log(weekday_first);
+        console.log(date_last);
 
         for (let i = 0; i < weekday_first; i++) {
             this.calendar.push(new EmptyCalendarElement());
@@ -49,13 +56,23 @@ class Calendar {
     }
 
     show() {
-        $("#calendar-area").empty();
-        let $title = $("<p>").text(this.year_current + "年" + (this.month_current+1) + "月");
-        $("#calendar-area").append($title);
-        let $table = $("<table>");
+        $("#calendar-table").empty();
+        $("#date-year").text(this.year_current);
+        $("#date-month").text(this.month_current + 1);
+        let $table = $("<table>").addClass("calendar-table");
+
+        // 曜日
+        let table_row = $("<tr>").addClass("calendar-header");
+        for (let i = 0; i <= 6; i++) {
+            let table_header = $("<th>");
+            table_header.text(this.MAP_WEEKDAY[i]);
+            table_row.append(table_header);
+        }
+        $table.append(table_row);
+
         for (let i = 1; i <= 6; i++) {
 
-            let table_row = $("<tr>");
+            table_row = $("<tr>");
             for (let j = 1; j <= 7; j++) {
                 let place = 7 * (i - 1) + j - 1;
                 let table_cell = this.calendar[place].toTableCellElement();
@@ -63,7 +80,7 @@ class Calendar {
             }
             $table.append(table_row);
         }
-        $("#calendar-area").append($table);
+        $("#calendar-table").append($table);
     }
 
     next() {

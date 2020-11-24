@@ -4,6 +4,9 @@
 
 <html>
     <head>
+
+        <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+
         <script
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -13,13 +16,34 @@
         <script src="./js/EmptyCalendarElement.js"></script>
         <script src="./js/CalendarElement.js"></script>
         <script src="./js/schedule.js"></script>
+
+        <link rel="stylesheet" href="./css/calendar.css">
     </head>
     <body>
-        <div id="calendar-area">
-        </div>
-        <button id="calendar-change-prev">前月</button>
-        <button id="calendar-change-next">次月</button>
+        <div id="calendar-area" class="calendar">
 
+            <div id="calendar-title" class="calendar-title">
+                <div class="button-area">
+                    <!-- <button id="calendar-change-prev">前月</button> -->
+                    <i id="calendar-change-prev" class="button-prev fas fa-caret-left fa-3x"></i>
+                </div>
+                <div class="info-date">
+                    <div id="date-year" class="date-year">
+                        2020
+                    </div>
+                    <div id="date-month" class="date-month">
+                        11
+                    </div>
+                </div>
+                <div class="button-area">
+                    <!-- <button id="calendar-change-next">次月</button> -->
+                    <i id="calendar-change-next" class="button-next fas fa-caret-right fa-3x"></i>
+                </div>
+            </div>
+
+            <div id="calendar-table">
+            </div>
+        </div>
         <div id="form-area">
             <form id="form-schedule" method="" action="">
                 <input type="text" id="text-title" name="title"/>

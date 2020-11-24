@@ -1,0 +1,103 @@
+.calendar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-table {
+    border-collapse: collapse;
+}
+
+.calendar-table td, th {
+    border: 1px solid #888888;
+    max-height: 60px;
+}
+
+.calendar-table th {
+    background-color: #EEEEEE;
+}
+
+.calendar-table tr td:first-child {
+    background-color: #FFCCCC;
+    color: #CC0000;
+}
+
+.calendar-table tr th:first-child {
+    background-color: #FFCCCC;
+    color: #CC0000;
+}
+
+.calendar-table tr td:last-child {
+    background-color: #CCFFFF;
+    color: #0000CC;
+}
+
+.calendar-table tr th:last-child {
+    background-color: #CCFFFF;
+    color: #0000CC;
+}
+
+.calendar-element {
+    font-size: 16px;
+}
+
+.calendar-day {
+    padding: 4px 30px 0px 8px;
+    min-height: 28px;
+}
+
+.calendar-schedule {
+    height: 40px;
+}
+
+.calendar-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0px 5px 0px;
+}
+
+.calendar-title .button-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 20px;
+}
+
+.calendar-title > div {
+    min-height: 50px;
+}
+
+.info-date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-date .date-year {
+    font-size: 14px;
+}
+
+.info-date .date-month {
+    margin-top: -5px;
+    font-size: 26px;
+}
+
+.button-prev {
+    color: #BBBBBB;
+}
+
+.button-prev:hover {
+    cursor: pointer;
+}
+
+.button-next {
+    color: #BBBBBB;
+}
+
+.button-next:hover {
+    cursor: pointer;
+}
