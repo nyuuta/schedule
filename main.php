@@ -24,20 +24,20 @@
 
             <div id="calendar-title" class="calendar-title">
                 <div class="button-area">
-                    <!-- <button id="calendar-change-prev">前月</button> -->
-                    <i id="calendar-change-prev" class="button-prev fas fa-caret-left fa-3x"></i>
+                    <button id="calendar-change-prev">
+                        <i class="button-prev fas fa-caret-left fa-4x"></i>
+                    </button>
                 </div>
                 <div class="info-date">
                     <div id="date-year" class="date-year">
-                        2020
                     </div>
                     <div id="date-month" class="date-month">
-                        11
                     </div>
                 </div>
                 <div class="button-area">
-                    <!-- <button id="calendar-change-next">次月</button> -->
-                    <i id="calendar-change-next" class="button-next fas fa-caret-right fa-3x"></i>
+                    <button id="calendar-change-next">
+                        <i class="button-next fas fa-caret-right fa-4x"></i>
+                    </button>
                 </div>
             </div>
 
