@@ -37,9 +37,6 @@ class Calendar {
         let weekday_first = new Date(year, month).getDay();
         let date_last = new Date(year, month+1, 0).getDate();
 
-        console.log(weekday_first);
-        console.log(date_last);
-
         for (let i = 0; i < weekday_first; i++) {
             this.calendar.push(new EmptyCalendarElement());
         }
@@ -95,5 +92,13 @@ class Calendar {
         let date_new = new Date(this.year_current, this.month_current);
         this.init(date_new.getFullYear(), date_new.getMonth());
         this.show();
+    }
+
+    getCurrentYear() {
+        return this.year_current;
+    }
+
+    getCurrentMonth() {
+        return this.month_current;
     }
 }

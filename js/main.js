@@ -45,9 +45,19 @@ $(document).ready(function () {
         
         console.log("click next button.");
 
-        // TODO: ±100年を超える場合はボタンを無効化
-
         calendar_object.next();
+
+        let calendar_year = calendar_object.getCurrentYear();
+        let calendar_month = calendar_object.getCurrentMonth();
+
+        if ((calendar_year === date_current.getFullYear()+100) && (calendar_month === 11)) {
+            $(this).addClass("fa-disabled");
+            $(this).prop("disabled", true);
+        } else {
+            $("#calendar-change-prev").removeClass("fa-disabled");
+            $("#calendar-change-prev").prop("disabled", false);
+
+        }
     });
 
 
@@ -56,5 +66,16 @@ $(document).ready(function () {
         console.log("click prev button.");
 
         calendar_object.prev();
+
+        let calendar_year = calendar_object.getCurrentYear();
+        let calendar_month = calendar_object.getCurrentMonth();
+
+        if ((calendar_year === date_current.getFullYear()-100) && (calendar_month === 0)) {
+            $(this).addClass("fa-disabled");
+            $(this).prop("disabled", true);
+        } else {
+            $("#calendar-change-next").removeClass("fa-disabled");
+            $("#calendar-change-next").prop("disabled", false);
+        }
     });
 });
