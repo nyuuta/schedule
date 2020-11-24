@@ -41,7 +41,7 @@ $(document).ready(function () {
     // 予定情報を追加
     getSchedules();
 
-    $("button#calendar-change-next").on("click", function () {
+    $("#calendar-change-next").on("click", function () {
         
         console.log("click next button.");
 
@@ -51,7 +51,7 @@ $(document).ready(function () {
     });
 
 
-    $("button#calendar-change-prev").on("click", function () {
+    $("#calendar-change-prev").on("click", function () {
         
         console.log("click prev button.");
 

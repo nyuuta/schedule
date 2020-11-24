@@ -10,12 +10,15 @@ class CalendarElement {
 
     toTableCellElement() {
 
-        let $div = $("<div>").text(this.day);
+        let $div_day = $("<div>").text(this.day).addClass("calendar-day");
+
+        let $div_schedule = $("<div>").addClass("calendar-schedule");
         let $table_cell = $("<td>").addClass("calendar-element").attr({
             "data-date": this.date,
             "data-weekday": this.weekday,
         })
-        $table_cell.append($div);
+        $table_cell.append($div_day);
+        $table_cell.append($div_schedule);
 
         return $table_cell;
     }
