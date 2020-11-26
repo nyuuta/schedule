@@ -9,13 +9,15 @@
     border-collapse: collapse;
 }
 
-.calendar-table td, th {
+.calendar-table td {
     border: 1px solid #888888;
-    max-height: 60px;
+    height: 60px;
 }
 
 .calendar-table th {
+    border: 1px solid #888888;
     background-color: #EEEEEE;
+    height: 30px;
 }
 
 .calendar-table tr td:first-child {
@@ -40,11 +42,36 @@
 
 .calendar-element {
     font-size: 16px;
+    height: 28px;
+    width: 80px;
+}
+
+.calendar-holiday {
+    background-color: #FFCCCC;
+    color: #CC0000;
+}
+
+.calendar-sunday {
+    background-color: #FFCCCC;
+    color: #CC0000;
+}
+
+.calendar-saturday {
+    background-color: #CCFFFF;
+    color: #0000CC;
+}
+
+.calendar-day-info {
+    display: flex;
+    height: 30px;
+}
+
+.calendar-holiday-name {
+    font-size: 10px;
 }
 
 .calendar-day {
-    padding: 4px 30px 0px 8px;
-    min-height: 28px;
+    padding: 4px 4px 0px 8px;
 }
 
 .calendar-schedule {

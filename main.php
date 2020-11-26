@@ -4,7 +4,7 @@
 
 <html>
     <head>
-
+        <meta charset="utf-8"/>
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
 
         <script
@@ -15,6 +15,11 @@
         <script src="./js/Calendar.js"></script>
         <script src="./js/EmptyCalendarElement.js"></script>
         <script src="./js/CalendarElement.js"></script>
+        <script src="./js/CalendarDateEmpty.js"></script>
+        <script src="./js/CalendarDateHoliday.js"></script>
+        <script src="./js/CalendarDateNormal.js"></script>
+        <script src="./js/CalendarDateSaturday.js"></script>
+        <script src="./js/CalendarDateSunday.js"></script>
         <script src="./js/schedule.js"></script>
 
         <link rel="stylesheet" href="./css/calendar.css">
@@ -60,6 +65,9 @@
                 <input type="text" id="text-update" name="content"/>
                 <button type="submit">更新</button>
             </form>
+        </div>
+
+        <div id="debug">
         </div>
     </body>
 </html>
