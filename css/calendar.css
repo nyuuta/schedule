@@ -44,6 +44,7 @@
     font-size: 16px;
     height: 28px;
     width: 80px;
+    padding: 4px 4px 0px 8px;
 }
 
 .calendar-holiday {
@@ -68,10 +69,6 @@
 
 .calendar-holiday-name {
     font-size: 10px;
-}
-
-.calendar-day {
-    padding: 4px 4px 0px 8px;
 }
 
 .calendar-schedule {
