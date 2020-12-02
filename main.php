@@ -12,14 +12,8 @@
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
         <script src="./js/main.js"></script>
-        <script src="./js/Calendar.js"></script>
-        <script src="./js/EmptyCalendarElement.js"></script>
-        <script src="./js/CalendarElement.js"></script>
-        <script src="./js/CalendarDateEmpty.js"></script>
-        <script src="./js/CalendarDateHoliday.js"></script>
-        <script src="./js/CalendarDateNormal.js"></script>
-        <script src="./js/CalendarDateSaturday.js"></script>
-        <script src="./js/CalendarDateSunday.js"></script>
+        <script src="./js/utility/Calendar.js"></script>
+        <script src="./js/CalendarComponent.js"></script>
         <script src="./js/schedule.js"></script>
 
         <link rel="stylesheet" href="./css/calendar.css">
@@ -34,9 +28,9 @@
                     </button>
                 </div>
                 <div class="info-date">
-                    <div id="date-year" class="date-year">
+                    <div id="calendar-info-year" class="date-year">
                     </div>
-                    <div id="date-month" class="date-month">
+                    <div id="calendar-info-month" class="date-month">
                     </div>
                 </div>
                 <div class="button-area">
@@ -47,8 +41,14 @@
             </div>
 
             <div id="calendar-table">
+                <table class="calendar-table">
+                    <tr class="calendar-header">
+                        <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
+                    </tr>
+                </table>
             </div>
         </div>
+
         <div id="form-area">
             <form id="form-schedule" method="" action="">
                 <input type="text" id="text-title" name="title"/>
