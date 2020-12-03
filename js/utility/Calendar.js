@@ -35,7 +35,7 @@ class Calendar {
             let dateObjEx = this.getDateObjectEx(this.year, this.month, i, day);
 
             calendarData[i + dayOfFirstDate - 1] = {
-                fulldate: this.year + "-" + (this.month + 1) + "-" + i,
+                fulldate: this.year + "-" + this.month + "-" + i,
                 date: i,
                 day: day,
                 holidayName: dateObjEx.holidayName,

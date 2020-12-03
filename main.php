@@ -49,6 +49,9 @@
             </div>
         </div>
 
+        <div id="schedule-area">
+        </div>
+
         <div id="form-area">
             <form id="form-schedule" method="" action="">
                 <input type="text" id="text-title" name="title"/>
