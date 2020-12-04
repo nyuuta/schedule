@@ -17,40 +17,54 @@
         <script src="./js/schedule.js"></script>
 
         <link rel="stylesheet" href="./css/calendar.css">
+        <link rel="stylesheet" href="./css/schedule.css">
     </head>
     <body>
-        <div id="calendar-area" class="calendar">
+        <div class="container">
 
-            <div id="calendar-title" class="calendar-title">
-                <div class="button-area">
-                    <button id="calendar-change-prev">
-                        <i class="button-prev fas fa-caret-left fa-4x"></i>
-                    </button>
-                </div>
-                <div class="info-date">
-                    <div id="calendar-info-year" class="date-year">
+            <div id="calendar-area" class="calendar">
+
+                <div id="calendar-title" class="calendar-title">
+                    <div class="button-area">
+                        <button id="calendar-change-prev">
+                            <i class="button-prev fas fa-caret-left fa-4x"></i>
+                        </button>
                     </div>
-                    <div id="calendar-info-month" class="date-month">
+                    <div class="info-date">
+                        <div id="calendar-info-year" class="date-year">
+                        </div>
+                        <div id="calendar-info-month" class="date-month">
+                        </div>
+                    </div>
+                    <div class="button-area">
+                        <button id="calendar-change-next">
+                            <i class="button-next fas fa-caret-right fa-4x"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="button-area">
-                    <button id="calendar-change-next">
-                        <i class="button-next fas fa-caret-right fa-4x"></i>
-                    </button>
+
+                <div id="calendar-table">
+                    <table class="calendar-table">
+                        <tr class="calendar-header">
+                            <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
-            <div id="calendar-table">
-                <table class="calendar-table">
-                    <tr class="calendar-header">
-                        <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
-                    </tr>
-                </table>
-            </div>
-        </div>
+            <!-- 区切り -->
+            <div class="vertical-partition"></div>
 
-        <div id="schedule-area">
-        </div>
+            <div id="schedule-list-are" class="schedule-list-area">
+                <div id="schedule-list-fulldate" class="schedule-list-fulldate">
+                </div>
+                <div class="schedule-list-content">
+                    <form id="schedule-list" action="" method="">
+                    </form>
+                </div>
+            </div>
+
+        </div><!-- .container -->
 
         <div id="form-area">
             <form id="form-schedule" method="" action="">
