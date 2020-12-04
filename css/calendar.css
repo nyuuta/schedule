@@ -11,7 +11,8 @@
 
 .calendar-table td {
     border: 1px solid #888888;
-    height: 60px;
+    height: 100px;
+    vertical-align: top;
 }
 
 .calendar-table th {
@@ -42,7 +43,7 @@
 
 .calendar-element {
     font-size: 16px;
-    height: 28px;
+    /* height: 28px; */
     width: 80px;
     padding: 4px 4px 0px 8px;
 }
@@ -65,14 +66,20 @@
 .calendar-day-info {
     display: flex;
     height: 30px;
+    width: 80px;
 }
 
 .calendar-holiday-name {
+    margin-left: 4px;
     font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .calendar-schedule {
-    height: 40px;
+    height: 60px;
+    width: 80px;
 }
 
 .calendar-title {
@@ -135,4 +142,8 @@
       background-color: rgba(0, 0, 0, 0);
       border: none;
       outline: none;
+  }
+
+  .calendar-selected-date {
+      background-color: #F0E68C;
   }

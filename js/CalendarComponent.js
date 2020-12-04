@@ -7,6 +7,10 @@ class CalendarComponent {
             "EMPTY": 0, "WEEKDAY": 1, "SATURDAY": 2, "SUNDAY": 3, "HOLIDAY": 4
         }
 
+        this.DAY_MAP = {
+            0: "日", 1: "月", 2: "火", 3: "水", 4: "木", 5: "金", 6: "土" 
+        }
+
         this.STYLE = {
             0: "calendar-empty", 1: "calendar-day",
             2: "calendar-saturday", 3: "calendar-sunday",
@@ -35,6 +39,7 @@ class CalendarComponent {
         this.visibleNextButton = true;
 
         // スケジュール一覧を表示する日付(デフォルトは当日)
+        // this.selectedDate = new Date(2020, 11, 15);
         this.selectedDate = new Date();
     }
 
@@ -51,6 +56,9 @@ class CalendarComponent {
         // ボタン
         this.$nextButton = this.$rootEl.find("#calendar-change-next");
         this.$prevButton = this.$rootEl.find("#calendar-change-prev");
+
+        // スケジュール一覧
+        this.$scheduleListArea = $("#schedule-list-area");
     }
 
     // イベントの割り当て
@@ -185,10 +193,34 @@ class CalendarComponent {
             }
 
             _this.schedules = response.schedules;
+
+            //各fulldate毎にscheduleを格納
+            // 件数が3件以上の場合は2件appendした後に+XX件という表記を入れる
+
+            let dateSchedules = {};
             for (let schedule of _this.schedules) {
-                let $li = $("<li>").text(_this.escapeHTML(schedule.title)).attr("data-schedule-id", schedule.id);
-                $("td[data-fulldate='" + schedule.date + "'] ul").append($li);
+                if (!dateSchedules.hasOwnProperty(schedule.date)) {
+                    dateSchedules[schedule.date] = [];
+                }
+                dateSchedules[schedule.date].push(schedule);
             }
+
+            _this.trueSchedules = dateSchedules;
+
+            for (let dateSchedule in dateSchedules) {
+                let count = 0;
+                for (let schedule of dateSchedules[dateSchedule]) {
+                    let $li = $("<li>").text(_this.escapeHTML(schedule.title)).attr("data-schedule-id", schedule.id);
+                    $("td[data-fulldate='" + schedule.date + "'] ul").append($li);
+                    count++;
+                    if (count == 2 && dateSchedules[dateSchedule].length >= 3) {
+                        $li = $("<li>").text(`+${dateSchedules[dateSchedule].length-2}件`);
+                        $("td[data-fulldate='" + schedule.date + "'] ul").append($li);
+                        break;
+                    }
+                }
+            }
+
             _this.showSchedulesOfSelectedDate();
             _this.highlightSelectedDate();
         }).fail(function (response) {
@@ -201,22 +233,25 @@ class CalendarComponent {
 
     showSchedulesOfSelectedDate() {
 
-        let isScheduleEmpty = true;
+        $("#schedule-list").empty();
 
+        // 日付の表示
+        $("#schedule-list-fulldate").text(`${this.selectedDate.getFullYear()}年${(this.selectedDate.getMonth() + 1)}月${this.selectedDate.getDate()}日 (${this.DAY_MAP[this.selectedDate.getDay()]})`);
+
+        // 選択状態にある日付を取得し、対応するスケジュール一覧を表示
         let formatedDateString = this.selectedDate.getFullYear() + "-" + this.selectedDate.getMonth() + "-" + this.selectedDate.getDate();
-        let $ul = $("<ul>");
-        for (let schedule of this.schedules) {
-            if (formatedDateString === schedule.date) {
-                isScheduleEmpty = false;
-                let $li = $("<li>").text(this.escapeHTML(schedule.title)).attr("data-schedule-id", schedule.id);
-                $ul.append($li);
-            }
-        }
-
-        if (isScheduleEmpty) {
-            $("#schedule-area").append($("<p>").text("予定が存在しません。"));
+        let schedules = this.trueSchedules[formatedDateString];
+        if (typeof schedules === "undefined") {
+            $("#schedule-list").append($("<p>").text("予定が存在しません。"));
         } else {
-            $("#schedule-area").append($ul);
+            for (let schedule of schedules) {
+                let $div = $("<div>");
+                let checkbox = `<input id="schedule-${schedule.id}" type="checkbox" name="schedule" value="${schedule.id}">`;
+                let label = `<label for="schedule-${schedule.id}">${this.escapeHTML(schedule.title)}</label>`;
+                $div.append(checkbox);
+                $div.append(label);
+                $("#schedule-list").append($div);
+            }
         }
     }
 
