@@ -23,13 +23,21 @@
         $dbh = DB::singleton()->get();
         $stmt = $dbh->prepare("SELECT * FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?)");
         $stmt->execute(array($year.$month));
-        $response["schedules"] = $stmt->fetchAll();
+        $response["schedules"] = groupSchedulesByDate($stmt->fetchAll());
         echo(json_encode($response));
         exit;
     } catch (PDOException $e) {
         header('HTTP/1.1 500 Internal Server Error');
         echo(json_encode($response));
         exit;
+    }
+
+    function groupSchedulesByDate($schedules) {
+        $groupedSchedules = array();
+        foreach ($schedules as $schedule) {
+            $groupedSchedules[$schedule["date"]][] = $schedule;
+        }
+        return $groupedSchedules;
     }
     
     /**

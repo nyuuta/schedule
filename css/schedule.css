@@ -32,7 +32,6 @@
 
 .container {
     display: flex;
-    /* justify-content: space-around; */
 }
 
 .container .calendar {

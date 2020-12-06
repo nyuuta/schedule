@@ -21,29 +21,8 @@
     height: 30px;
 }
 
-.calendar-table tr td:first-child {
-    background-color: #FFCCCC;
-    color: #CC0000;
-}
-
-.calendar-table tr th:first-child {
-    background-color: #FFCCCC;
-    color: #CC0000;
-}
-
-.calendar-table tr td:last-child {
-    background-color: #CCFFFF;
-    color: #0000CC;
-}
-
-.calendar-table tr th:last-child {
-    background-color: #CCFFFF;
-    color: #0000CC;
-}
-
 .calendar-element {
     font-size: 16px;
-    /* height: 28px; */
     width: 80px;
     padding: 4px 4px 0px 8px;
 }
@@ -61,6 +40,11 @@
 .calendar-saturday {
     background-color: #CCFFFF;
     color: #0000CC;
+}
+
+.calendar-empty {
+    background-color: #b8bbbb;
+    opacity: 0.2;
 }
 
 .calendar-day-info {
@@ -144,6 +128,6 @@
       outline: none;
   }
 
-  .calendar-selected-date {
+  td.calendar-selected-date {
       background-color: #F0E68C;
   }

@@ -20,7 +20,6 @@ class CalendarComponent {
         this.CALENDAR_LIMIT = 50;
 
         this.$rootEl = $rootEl;
-        this.schedules = [];
 
         this.initViewModel();
         this.buildElements();
@@ -28,19 +27,23 @@ class CalendarComponent {
         this.updateView();
     }
 
-    // viewの状態定義
+    /**
+     * viewの表示に必要なデータや状態を定義
+     */
     initViewModel() {
 
-        // カレンダーとして表示する年月状態
-        this.selectedFulldate = new Date();
+        // カレンダーとして表示する年月(デフォルトはアクセス時の年月)
+        this.fulldateOfDisplayedCalendar = new Date();
 
         // 月移動ボタンの有効/無効状態
         this.visiblePrevButton = true;
         this.visibleNextButton = true;
 
-        // スケジュール一覧を表示する日付(デフォルトは当日)
-        // this.selectedDate = new Date(2020, 11, 15);
-        this.selectedDate = new Date();
+        // 登録されているスケジュール一覧を表示する日付(デフォルトはアクセス時の年月日)
+        this.fulldateOfSelectedDate = new Date();
+
+        // 表示されているカレンダーが持つスケジュール一覧
+        this.scheduleList = [];
     }
 
     // コンポーネントで使用する要素の構築、子コンポーネントの作成
@@ -67,22 +70,22 @@ class CalendarComponent {
         // 月移動ボタン押下時に表示月を変更してupdateView()に任せる
         let _this = this;
         this.$rootEl.on("click", "#calendar-change-prev", function (evt) {
-            _this.selectedFulldate.setMonth(_this.selectedFulldate.getMonth() - 1);
+            _this.fulldateOfDisplayedCalendar.setMonth(_this.fulldateOfDisplayedCalendar.getMonth() - 1);
             _this.visiblePrevButton = _this.canPrevMonth();
             _this.visibleNextButton = _this.canNextMonth();
             _this.updateView();
         });
 
         this.$rootEl.on("click", "#calendar-change-next", function (evt) {
-            _this.selectedFulldate.setMonth(_this.selectedFulldate.getMonth() + 1);
+            _this.fulldateOfDisplayedCalendar.setMonth(_this.fulldateOfDisplayedCalendar.getMonth() + 1);
             _this.visiblePrevButton = _this.canPrevMonth();
             _this.visibleNextButton = _this.canNextMonth();
             _this.updateView();
         });
 
         // カレンダー内の日付部分を押下した時
-        this.$rootEl.on("click", "td", function (evt) {
-            _this.selectedDate.setDate($(this).attr("data-fulldate").split("-")[2]);
+        this.$rootEl.on("click", "td:not(.calendar-empty)", function (evt) {
+            _this.fulldateOfSelectedDate.setDate($(this).attr("data-fulldate").split("-")[2]);
             _this.updateView();
         })
     }
@@ -91,7 +94,7 @@ class CalendarComponent {
     updateView() {
 
         // カレンダーデータの表示
-        let calendar = new Calendar(this.selectedFulldate.getFullYear(), this.selectedFulldate.getMonth());
+        let calendar = new Calendar(this.fulldateOfDisplayedCalendar.getFullYear(), this.fulldateOfDisplayedCalendar.getMonth());
         let calendarData = calendar.create();
         this.showCalendar(calendarData);
 
@@ -119,8 +122,8 @@ class CalendarComponent {
     showCalendar(calendarData) {
 
         this.$calendarTable.find("tr").not(":first").remove();
-        this.$calendarInfoYear.text(this.selectedFulldate.getFullYear());
-        this.$calendarInfoMonth.text(this.selectedFulldate.getMonth()+1);
+        this.$calendarInfoYear.text(this.fulldateOfDisplayedCalendar.getFullYear());
+        this.$calendarInfoMonth.text(this.fulldateOfDisplayedCalendar.getMonth()+1);
 
         let $row = $("<tr>");
 
@@ -160,14 +163,14 @@ class CalendarComponent {
     }
 
     canNextMonth() {
-        if ((this.selectedFulldate.getFullYear() === new Date().getFullYear() + this.CALENDAR_LIMIT) && (this.selectedFulldate.getMonth() === 11)) {
+        if ((this.fulldateOfDisplayedCalendar.getFullYear() === new Date().getFullYear() + this.CALENDAR_LIMIT) && (this.fulldateOfDisplayedCalendar.getMonth() === 11)) {
             return false;
         } 
         return true;
     }
 
     canPrevMonth() {
-        if ((this.selectedFulldate.getFullYear() === new Date().getFullYear() - this.CALENDAR_LIMIT) && (this.selectedFulldate.getMonth() === 0)) {
+        if ((this.fulldateOfDisplayedCalendar.getFullYear() === new Date().getFullYear() - this.CALENDAR_LIMIT) && (this.fulldateOfDisplayedCalendar.getMonth() === 0)) {
             return false;
         } 
         return true;
@@ -181,8 +184,8 @@ class CalendarComponent {
         $.ajax({
             url: "./readSchedule.php",
             data: {
-                year: this.selectedFulldate.getFullYear(),
-                month: this.selectedFulldate.getMonth()
+                year: this.fulldateOfDisplayedCalendar.getFullYear(),
+                month: this.fulldateOfDisplayedCalendar.getMonth()
             },
             type: "GET",
             dataType: "json"
@@ -191,30 +194,18 @@ class CalendarComponent {
                 alert(reponse.message);
                 return;
             }
+            _this.scheduleList = response.schedules;
 
-            _this.schedules = response.schedules;
-
-            //各fulldate毎にscheduleを格納
             // 件数が3件以上の場合は2件appendした後に+XX件という表記を入れる
-
-            let dateSchedules = {};
-            for (let schedule of _this.schedules) {
-                if (!dateSchedules.hasOwnProperty(schedule.date)) {
-                    dateSchedules[schedule.date] = [];
-                }
-                dateSchedules[schedule.date].push(schedule);
-            }
-
-            _this.trueSchedules = dateSchedules;
-
-            for (let dateSchedule in dateSchedules) {
+            // 上の部分は描画とは別ロジックな気がする
+            for (let keyDate in _this.scheduleList) {
                 let count = 0;
-                for (let schedule of dateSchedules[dateSchedule]) {
+                for (let schedule of _this.scheduleList[keyDate]) {
                     let $li = $("<li>").text(_this.escapeHTML(schedule.title)).attr("data-schedule-id", schedule.id);
                     $("td[data-fulldate='" + schedule.date + "'] ul").append($li);
                     count++;
-                    if (count == 2 && dateSchedules[dateSchedule].length >= 3) {
-                        $li = $("<li>").text(`+${dateSchedules[dateSchedule].length-2}件`);
+                    if (count == 2 && _this.scheduleList[keyDate].length >= 3) {
+                        $li = $("<li>").text(`+${_this.scheduleList[keyDate].length-2}件`);
                         $("td[data-fulldate='" + schedule.date + "'] ul").append($li);
                         break;
                     }
@@ -236,11 +227,11 @@ class CalendarComponent {
         $("#schedule-list").empty();
 
         // 日付の表示
-        $("#schedule-list-fulldate").text(`${this.selectedDate.getFullYear()}年${(this.selectedDate.getMonth() + 1)}月${this.selectedDate.getDate()}日 (${this.DAY_MAP[this.selectedDate.getDay()]})`);
+        $("#schedule-list-fulldate").text(`${this.fulldateOfSelectedDate.getFullYear()}年${(this.fulldateOfSelectedDate.getMonth() + 1)}月${this.fulldateOfSelectedDate.getDate()}日 (${this.DAY_MAP[this.fulldateOfSelectedDate.getDay()]})`);
 
         // 選択状態にある日付を取得し、対応するスケジュール一覧を表示
-        let formatedDateString = this.selectedDate.getFullYear() + "-" + this.selectedDate.getMonth() + "-" + this.selectedDate.getDate();
-        let schedules = this.trueSchedules[formatedDateString];
+        let formatedDateString = this.fulldateOfSelectedDate.getFullYear() + "-" + this.fulldateOfSelectedDate.getMonth() + "-" + this.fulldateOfSelectedDate.getDate();
+        let schedules = this.scheduleList[formatedDateString];
         if (typeof schedules === "undefined") {
             $("#schedule-list").append($("<p>").text("予定が存在しません。"));
         } else {
@@ -259,7 +250,7 @@ class CalendarComponent {
 
         $(".calendar-selected-date").removeClass("calendar-selected-date");
 
-        let formatedDateString = this.selectedDate.getFullYear() + "-" + this.selectedDate.getMonth() + "-" + this.selectedDate.getDate();
+        let formatedDateString = this.fulldateOfSelectedDate.getFullYear() + "-" + this.fulldateOfSelectedDate.getMonth() + "-" + this.fulldateOfSelectedDate.getDate();
         $("td[data-fulldate='" + formatedDateString + "']").addClass("calendar-selected-date");
     }
 
