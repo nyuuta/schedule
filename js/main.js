@@ -1,5 +1,5 @@
 $(document).ready(function () {
 
-    // カレンダーの作成と表示
-    let component = new CalendarComponent($("#calendar-area"));
+    // コンテナコンポーネントの起動
+    let component = new MainContainerComponent($("#container"));
 });
