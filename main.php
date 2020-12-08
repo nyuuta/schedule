@@ -11,16 +11,21 @@
     src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js" integrity="sha512-AbgDRHOu/IQcXzZZ6WrOliwI8umwOgLE7sZgRAsNzmcOWlQA8RhXQzBx99Ho0jlGPWIPoT9pwk4kmeeR4qsV/g==" crossorigin="anonymous"></script>
         <script src="./js/main.js"></script>
         <script src="./js/utility/Calendar.js"></script>
+        <script src="./js/utility/security.js"></script>
+        <script src="./js/utility/const.js"></script>
+        <script src="./js/MainContainerComponent.js"></script>
         <script src="./js/CalendarComponent.js"></script>
+        <script src="./js/ScheduleListComponent.js"></script>
         <script src="./js/schedule.js"></script>
 
         <link rel="stylesheet" href="./css/calendar.css">
         <link rel="stylesheet" href="./css/schedule.css">
     </head>
     <body>
-        <div class="container">
+        <div id="container" class="container">
 
             <div id="calendar-area" class="calendar">
 
@@ -55,7 +60,7 @@
             <!-- 区切り -->
             <div class="vertical-partition"></div>
 
-            <div id="schedule-list-are" class="schedule-list-area">
+            <div id="schedule-list-area" class="schedule-list-area">
                 <div id="schedule-list-fulldate" class="schedule-list-fulldate">
                 </div>
                 <div class="schedule-list-content">
