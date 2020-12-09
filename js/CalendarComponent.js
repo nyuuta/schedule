@@ -103,6 +103,13 @@ class CalendarComponent {
 
             _this.updateView();
         });
+
+        // スケジュールリストコンポーネント側でスケジュールに変更があった場合
+        this.eventEmitter.on(EVENT.SCHEDULE_CHANGE, (scheduleList) => {
+
+            _this.scheduleList = scheduleList;
+            _this.updateView();
+        });
     }
 
     // viewの更新

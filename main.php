@@ -19,7 +19,6 @@
         <script src="./js/MainContainerComponent.js"></script>
         <script src="./js/CalendarComponent.js"></script>
         <script src="./js/ScheduleListComponent.js"></script>
-        <script src="./js/schedule.js"></script>
 
         <link rel="stylesheet" href="./css/calendar.css">
         <link rel="stylesheet" href="./css/schedule.css">
@@ -67,16 +66,18 @@
                     <form id="schedule-list" action="" method="">
                     </form>
                 </div>
+
+                <div id="schedule-add-container">
+                    <form id="form-schedule-add" method="" action="">
+                        <input type="text" id="text-title" name="title"/>
+                        <button type="submit">追加</button>
+                    </form>
+                </div>
+
             </div>
 
         </div><!-- .container -->
 
-        <div id="form-area">
-            <form id="form-schedule" method="" action="">
-                <input type="text" id="text-title" name="title"/>
-                <button type="submit">追加</button>
-            </form>
-        </div>
         <div id="delete-area">
             <form id="form-delete" method="" action="">
                 <button type="submit">削除</button>

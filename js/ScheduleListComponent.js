@@ -50,12 +50,53 @@ class ScheduleListComponent {
         // this.$rootEl.on("change", "[name='schedule']", function () {
         //     _this.eventEmitter.emit(EVENT.SCHEDULE_CHANGE, "schedule test.");
         // });
+
+        // スケジュール追加ボタンが押下されたとき
+        $("#form-schedule-add").submit(function (evt) {
+        
+            let title = $("#text-title").val();
+            let date = _this.selectedDateObj.getFullYear()+"-"+_this.selectedDateObj.getMonth()+"-"+_this.selectedDateObj.getDate();
+            let day = _this.selectedDateObj.getDay();
+    
+            evt.preventDefault();
+
+            $.ajax({
+                url: "./createSchedule.php",
+                data: {
+                    user_id: 1,
+                    title: title,
+                    date: date,
+                    day: day
+                },
+                type: "POST",
+                dataType: "json",
+            }).done(function (response) {
+
+                if (response.status === "ng") {
+                    alert(reponse.message);
+                    return;
+                }
+
+                _this.scheduleList = response.data;
+                _this.eventEmitter.emit(EVENT.SCHEDULE_CHANGE, _this.scheduleList);
+                _this.updateView();
+            }).fail(function (response) {
+                // 通信失敗時のコールバック処理
+                window.location.href = "/500.html";
+            }).always(function (response) {
+                // 常に実行する処理
+            });
+        });
     }
 
     // viewの更新
     updateView() {
+
         // スケジュール一覧の表示
         this.showSchedulesOfSelectedDate();
+
+        // テキストボックスの初期化
+        this.$rootEl.find("input").val("");
     }
 
 

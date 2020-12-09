@@ -21,7 +21,7 @@
     // SELECT文で予定を取得
     try {
         $dbh = DB::singleton()->get();
-        $stmt = $dbh->prepare("SELECT * FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?)");
+        $stmt = $dbh->prepare("SELECT id, user_id, title, DATE_FORMAT(date, '%Y-%c-%e') as date FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?)");
         $stmt->execute(array($year.$month));
         $response["schedules"] = groupSchedulesByDate($stmt->fetchAll());
         echo(json_encode($response));

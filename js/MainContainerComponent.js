@@ -47,5 +47,11 @@ class MainContainerComponent {
         this.calendarEventEmitter.on(EVENT.DATE_CHANGE, (dateObj, scheduleList) => {
             _this.scheduleListEventEmitter.emit(EVENT.DATE_CHANGE, dateObj, scheduleList);
         });
+
+        // スケジュールリストコンポーネント側でスケジュールが変更された場合はカレンダーコンポーネント側に通知
+        this.scheduleListEventEmitter.on(EVENT.SCHEDULE_CHANGE, (scheduleList) => {
+
+            _this.calendarEventEmitter.emit(EVENT.SCHEDULE_CHANGE, scheduleList);
+        });
     }
 }
