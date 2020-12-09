@@ -3,20 +3,6 @@ $(document).ready(function () {
     let date_selected;
     let id_selected;
 
-    // カレンダー内の要素押下時
-    $(document).on("click", "#calendar-area td", function(){
-        console.log("click calendar element.");
-
-        date_selected = {
-            date: $(this).attr("data-date"),
-            weekday: $(this).attr("data-weekday")
-        }
-
-        // フォーム表示(本来はモーダルウィンドウなど)
-        $("#form-area").show();
-
-    });
-
     // カレンダー内の予定要素押下時
     $(document).on("click", "[data-id]", function(e){
         console.log("click schedule element.");
@@ -80,37 +66,6 @@ $(document).ready(function () {
                 }
         );
     });
-
-    $('#form-schedule').submit(function (e) {
-        
-        let title = $("#text-title").val();
-        let date = date_selected.date;
-        let day = date_selected.weekday;
-
-        e.preventDefault();
-        $.ajax({
-            url: "./createSchedule.php",
-            data: {
-                user_id: 1,
-                title: title,
-                date: date,
-                day: day
-            },
-            type: "POST",
-        })
-            .then(
-                // 成功時
-                function (response) {
-                    let $obj = $("<div>").text(title).attr("data-id", response);
-                    $("td[data-date='" + date + "']").append($obj);
-                },
-                // 失敗時
-                function (response) {
-
-                }
-        );
-
-    })
 
     $("#form-area").hide();
     $("#delete-area").hide();
