@@ -74,6 +74,9 @@
                     </form>
                 </div>
 
+                <div id="schedule-edit-container">
+                </div>
+
             </div>
 
         </div><!-- .container -->
@@ -82,15 +85,6 @@
             <form id="form-delete" method="" action="">
                 <button type="submit">削除</button>
             </form>
-        </div>
-        <div id="update-area">
-            <form id="form-update" method="" action="">
-                <input type="text" id="text-update" name="content"/>
-                <button type="submit">更新</button>
-            </form>
-        </div>
-
-        <div id="debug">
         </div>
     </body>
 </html>
