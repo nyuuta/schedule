@@ -67,11 +67,9 @@
                     </form>
                 </div>
 
-                <div id="schedule-add-container">
-                    <form id="form-schedule-add" method="" action="">
-                        <input type="text" id="text-title" name="title"/>
-                        <button type="submit">追加</button>
-                    </form>
+                <div id="schedule-button-container">
+                    <button id="button-schedule-add" type="button">新規追加</button>
+                    <button type="button">選択した予定をまとめて削除</button>
                 </div>
 
                 <div id="schedule-edit-container">

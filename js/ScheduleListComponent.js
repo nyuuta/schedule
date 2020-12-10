@@ -59,22 +59,28 @@ class ScheduleListComponent {
         // this.$rootEl.on("change", "[name='schedule']", function () {
         //     _this.eventEmitter.emit(EVENT.SCHEDULE_CHANGE, "schedule test.");
         // });
+        this.$rootEl.on("click", "#button-schedule-add", function (evt) {
+
+            _this.isVisibleEditArea = true;
+            _this.editType = EDITTYPE.ADD;
+
+            _this.updateView();
+        });
+        
 
         // スケジュール追加ボタンが押下されたとき
-        $("#form-schedule-add").submit(function (evt) {
-        
-            let title = $("#text-title").val();
-            let date = _this.selectedDateObj.getFullYear()+"-"+_this.selectedDateObj.getMonth()+"-"+_this.selectedDateObj.getDate();
+        this.$rootEl.on("click", "#form-schedule-add button", function (evt) {
+
+            let content = _this.$rootEl.find("#form-schedule-add input[name='content']").val();
+            let dateStr = _this.selectedDateObj.getFullYear()+"-"+_this.selectedDateObj.getMonth()+"-"+_this.selectedDateObj.getDate();
             let day = _this.selectedDateObj.getDay();
-    
-            evt.preventDefault();
 
             $.ajax({
                 url: "./createSchedule.php",
                 data: {
                     user_id: 1,
-                    title: title,
-                    date: date,
+                    title: content,
+                    date: dateStr,
                     day: day
                 },
                 type: "POST",
@@ -119,6 +125,7 @@ class ScheduleListComponent {
 
         // スケジュールが更新された場合
         this.$rootEl.on("click", "#form-schedule-update button", function (evt) {
+
             evt.preventDefault();
 
             let newTitle = _this.$rootEl.find("#form-schedule-update input[name='content']").val();
@@ -162,6 +169,8 @@ class ScheduleListComponent {
     // viewの更新
     updateView() {
 
+        let _this = this;
+
         // スケジュール一覧の表示
         this.showSchedulesOfSelectedDate();
 
@@ -171,12 +180,31 @@ class ScheduleListComponent {
         // 編集エリアの表示/非表示
         this.$rootEl.find("#schedule-edit-container").empty();
         if (this.isVisibleEditArea) {
-            this.showUpdateScheduleArea();
+
+            switch (_this.editType) {
+                case EDITTYPE.ADD:
+                    this.showAddScheduleArea();
+                    break;
+                case EDITTYPE.UPDATE:
+                    this.showUpdateScheduleArea();
+                    break;
+            } 
 
             this.$rootEl.find("#schedule-edit-container").show();
         } else {
             this.$rootEl.find("#schedule-edit-container").hide();
         }
+    }
+
+    showAddScheduleArea() {
+
+        let formElStr = `
+            <form id="form-schedule-add" method="" action="">
+                <input type="text" name="content"/>
+                <button type="button">追加</button>
+            </form>
+        `;
+        this.$rootEl.find("#schedule-edit-container").append(formElStr);
     }
 
     showUpdateScheduleArea() {
