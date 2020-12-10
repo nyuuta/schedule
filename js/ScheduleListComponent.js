@@ -25,6 +25,15 @@ class ScheduleListComponent {
 
         // スケジュール一覧
         this.scheduleList = data.scheduleList;
+
+        // スケジュール編集（新規追加、編集、削除）エリアの表示/非表示
+        this.isVisibleEditArea = false;
+
+        // 選択されているスケジュール情報
+        this.selectedScheduleList = [];
+
+        // スケジュール編集のタイプ
+        this.editType = EDITTYPE.ADD;
     }
 
     // コンポーネントで使用する要素の構築、子コンポーネントの作成
@@ -87,6 +96,67 @@ class ScheduleListComponent {
                 // 常に実行する処理
             });
         });
+
+        // スケジュール編集ボタンが押下されたとき
+        this.$rootEl.on("click", "#schedule-list button", function (evt) {
+
+            evt.preventDefault();
+
+            _this.isVisibleEditArea = true;
+
+            let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
+            let id = $(this).prev().attr("for").split("-")[1];
+            for (let schedule of _this.scheduleList[dateStr]) {
+                if (schedule.id == id) {
+                    _this.selectedScheduleList = [schedule];
+                    _this.editType = EDITTYPE.UPDATE;
+                    break;
+                }
+            }
+
+            _this.updateView();
+        });
+
+        // スケジュールが更新された場合
+        this.$rootEl.on("click", "#form-schedule-update button", function (evt) {
+            evt.preventDefault();
+
+            let newTitle = _this.$rootEl.find("#form-schedule-update input[name='content']").val();
+
+            $.ajax({
+                url: "./updateSchedule.php",
+                data: {
+                    id: _this.selectedScheduleList[0].id,
+                    title: newTitle,
+                },
+                type: "POST",
+                dataType: "json",
+            }).done(function (response) {
+
+                if (response.status === "ng") {
+                    alert(reponse.message);
+                    return;
+                }
+
+                let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
+                for (const [key, schedule] of _this.scheduleList[dateStr].entries()) {
+                    if (schedule.id == _this.selectedScheduleList[0].id) {
+                        _this.scheduleList[dateStr][key].title = newTitle;
+                        break;
+                    }
+                }
+
+                _this.eventEmitter.emit(EVENT.SCHEDULE_CHANGE, _this.scheduleList);
+                _this.isVisibleEditArea = false;
+                _this.updateView();
+            }).fail(function (response) {
+                // 通信失敗時のコールバック処理
+                window.location.href = "/500.html";
+            }).always(function (response) {
+                // 常に実行する処理
+            });
+        });
+
     }
 
     // viewの更新
@@ -97,8 +167,28 @@ class ScheduleListComponent {
 
         // テキストボックスの初期化
         this.$rootEl.find("input").val("");
+
+        // 編集エリアの表示/非表示
+        this.$rootEl.find("#schedule-edit-container").empty();
+        if (this.isVisibleEditArea) {
+            this.showUpdateScheduleArea();
+
+            this.$rootEl.find("#schedule-edit-container").show();
+        } else {
+            this.$rootEl.find("#schedule-edit-container").hide();
+        }
     }
 
+    showUpdateScheduleArea() {
+
+        let formElStr = `
+            <form id="form-schedule-update" method="" action="">
+                <input type="text" name="content" value="${this.selectedScheduleList[0].title}"/>
+                <button type="button">更新</button>
+            </form>
+        `;
+        this.$rootEl.find("#schedule-edit-container").append(formElStr);
+    }
 
     showSchedulesOfSelectedDate() {
 
@@ -117,8 +207,10 @@ class ScheduleListComponent {
                 let $div = $("<div>");
                 let checkbox = `<input id="schedule-${schedule.id}" type="checkbox" name="schedule" value="${schedule.id}">`;
                 let label = `<label for="schedule-${schedule.id}">${escapeHTML(schedule.title)}</label>`;
+                let button = "<button>編集</button>";
                 $div.append(checkbox);
                 $div.append(label);
+                $div.append(button);
                 this.$rootEl.find("#schedule-list").append($div);
             }
         }

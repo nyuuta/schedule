@@ -9,3 +9,5 @@ const EVENT = {
     DONE_INIT: "init component has done.",
     START: "start component"
 };
+
+const EDITTYPE = { "ADD": 0, "UPDATE": 1, "DELETE": 2 };
