@@ -34,6 +34,12 @@ class ScheduleListComponent {
 
         // スケジュール編集のタイプ
         this.editType = EDITTYPE.ADD;
+
+        // 削除ボタンの有効/無効フラグ
+        this.isDisableDeleteButton = true;
+
+        // チェックの入ったスケジュール情報
+        this.checkedSchedules = [];
     }
 
     // コンポーネントで使用する要素の構築、子コンポーネントの作成
@@ -55,16 +61,98 @@ class ScheduleListComponent {
             _this.updateView();
         });
 
-        // スケジュールの変更(更新、削除、追加)に合わせてカレンダーコンポーネント側に通知
-        // this.$rootEl.on("change", "[name='schedule']", function () {
-        //     _this.eventEmitter.emit(EVENT.SCHEDULE_CHANGE, "schedule test.");
-        // });
+        // 辞めるボタン
+        this.$rootEl.on("click", "#delete-cancel-button", function (evt) {
+
+            _this.isVisibleEditArea = false;
+
+            $("#schedule-edit-container").trigger("renderView");
+        });
+        // 削除確定ボタン
+        this.$rootEl.on("click", "#delete-confirm-button", function (evt) {
+
+            // チェックの入ったスケジュールのIDを取得
+            let ids = [];
+
+            for (let schedule of _this.checkedSchedules) {
+                ids.push(schedule.id);
+            }
+
+            // DBから削除
+            $.ajax({
+                url: "./deleteSchedule.php",
+                data: {
+                    "ids": ids,
+                },
+                type: "POST",
+                dataType: "json",
+            }).done(function (response) {
+
+                if (response.status === "ng") {
+                    alert(reponse.message);
+                    return;
+                }
+                // scheduleList更新、イベント通知
+
+                let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
+                _this.scheduleList[dateStr] = _this.scheduleList[dateStr].filter(scheduleObj => {
+                    return !ids.includes(scheduleObj.id);
+                });
+
+                _this.eventEmitter.emit(EVENT.SCHEDULE_CHANGE, _this.scheduleList);
+                _this.updateView();
+                _this.isVisibleEditArea = false;
+                $("#schedule-edit-container").trigger("renderView");
+            }).fail(function (response) {
+                // 通信失敗時のコールバック処理
+                window.location.href = "/500.html";
+            }).always(function (response) {
+                // 常に実行する処理
+            });
+        });
+
+
+        // チェックの入ったスケジュールが0個の場合は削除ボタンを無効化
+        this.$rootEl.on("change", "[name='schedule']", function () {
+            _this.isDisableDeleteButton = ($("input[name='schedule']:checkbox:checked").length === 0);
+
+            // チェックの入ったスケジュール情報を格納
+            let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
+            let checkedSchedules = [];
+
+            _this.$rootEl.find("input[name='schedule']:checkbox:checked").each((index, el) => {
+
+                let id = $(el).attr("id").split("-")[1];
+
+                for (let schedule of _this.scheduleList[dateStr]) {
+                    if (id == schedule.id) {
+                        checkedSchedules.push(schedule);
+                        break;
+                    }
+                }
+            });
+            _this.checkedSchedules = checkedSchedules;
+
+            $("#button-schedule-delete").trigger("renderView");
+        });
+
+
+        // スケジュール削除が選択された場合、下部に削除確認エリアを出す
+        this.$rootEl.on("click", "#button-schedule-delete", function (evt) {
+            _this.isVisibleEditArea = true;
+            _this.editType = EDITTYPE.DELETE;
+
+            $("#schedule-edit-container").trigger("renderView");
+        });
+            
+
+        // スケジュール追加が選択された場合、下部に追加用エリアを出す
         this.$rootEl.on("click", "#button-schedule-add", function (evt) {
 
             _this.isVisibleEditArea = true;
             _this.editType = EDITTYPE.ADD;
 
-            _this.updateView();
+            $("#schedule-edit-container").trigger("renderView");
         });
         
 
@@ -120,7 +208,7 @@ class ScheduleListComponent {
                 }
             }
 
-            _this.updateView();
+            $("#schedule-edit-container").trigger("renderView");
         });
 
         // スケジュールが更新された場合
@@ -169,31 +257,41 @@ class ScheduleListComponent {
     // viewの更新
     updateView() {
 
-        let _this = this;
+        let _this = this
+
+        $("#button-schedule-delete").on("renderView", function (evt) {
+            evt.stopPropagation();
+            $("#button-schedule-delete").prop("disabled", _this.isDisableDeleteButton);
+        });
+
+        $("#schedule-edit-container").on("renderView", function (evt) {
+            evt.stopPropagation();
+
+            _this.$rootEl.find("#schedule-edit-container").empty();
+            console.log("aaa");
+            if (_this.isVisibleEditArea) {
+                switch (_this.editType) {
+                    case EDITTYPE.ADD:
+                        _this.showAddScheduleArea();
+                        break;
+                    case EDITTYPE.UPDATE:
+                        _this.showUpdateScheduleArea();
+                        break;
+                    case EDITTYPE.DELETE:
+                        _this.showDeleteScheduleArea();
+                        break;
+                } 
+                _this.$rootEl.find("#schedule-edit-container").show();
+            } else {
+                _this.$rootEl.find("#schedule-edit-container").hide();
+            }
+        });
 
         // スケジュール一覧の表示
         this.showSchedulesOfSelectedDate();
 
-        // テキストボックスの初期化
-        this.$rootEl.find("input").val("");
-
-        // 編集エリアの表示/非表示
-        this.$rootEl.find("#schedule-edit-container").empty();
-        if (this.isVisibleEditArea) {
-
-            switch (_this.editType) {
-                case EDITTYPE.ADD:
-                    this.showAddScheduleArea();
-                    break;
-                case EDITTYPE.UPDATE:
-                    this.showUpdateScheduleArea();
-                    break;
-            } 
-
-            this.$rootEl.find("#schedule-edit-container").show();
-        } else {
-            this.$rootEl.find("#schedule-edit-container").hide();
-        }
+        // 削除ボタンの有効/無効切り替え
+        $("#button-schedule-delete").prop("disabled", this.isDisableDeleteButton);
     }
 
     showAddScheduleArea() {
@@ -215,6 +313,17 @@ class ScheduleListComponent {
                 <button type="button">更新</button>
             </form>
         `;
+        this.$rootEl.find("#schedule-edit-container").append(formElStr);
+    }
+
+    showDeleteScheduleArea() {
+
+        let formElStr = `
+                <p>選択された${this.checkedSchedules.length}個のスケジュールを本当に削除しますか？</p>
+                <button id="delete-cancel-button" type="button">やめる</button>
+                <button id="delete-confirm-button" type="button">削除確定</button>
+        `;
+
         this.$rootEl.find("#schedule-edit-container").append(formElStr);
     }
 

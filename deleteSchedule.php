@@ -1,16 +1,28 @@
 <?php
 
     require_once "./DB.php";
+    require_once "./Log.php";
 
-    // TODO: validation
-    echo(var_dump($_POST));
+    $response = array(
+        "status" => "ok",
+        "messages" => "",
+        "data" => array(),
+    );
 
-    // DELETE文で対象の予定を削除
-    $dbh = DB::singleton()->get();
-    $stmt = $dbh->prepare("DELETE FROM schedules WHERE id = :id");
-    $stmt->execute($_POST);
+    $inClause = substr(str_repeat(',?', count($_POST["ids"])), 1);
 
-    // TODO:例外処理
-    echo(json_encode(""));
-    exit;
+    // DBからDELTE
+    try {
+        $dbh = DB::singleton()->get();
+        $stmt = $dbh->prepare("DELETE FROM schedules WHERE id in ({$inClause})");
+        $stmt->execute($_POST["ids"]);
+
+        echo(json_encode($response));
+        exit;
+    } catch (PDOException $e) {
+        Log::error($e->getMessage());
+        header('HTTP/1.1 500 Internal Server Error');
+        echo(json_encode($response));
+        exit;
+    }
 ?>

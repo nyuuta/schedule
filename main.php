@@ -69,7 +69,7 @@
 
                 <div id="schedule-button-container">
                     <button id="button-schedule-add" type="button">新規追加</button>
-                    <button type="button">選択した予定をまとめて削除</button>
+                    <button id="button-schedule-delete" type="button">選択した予定をまとめて削除</button>
                 </div>
 
                 <div id="schedule-edit-container">
@@ -79,10 +79,5 @@
 
         </div><!-- .container -->
 
-        <div id="delete-area">
-            <form id="form-delete" method="" action="">
-                <button type="submit">削除</button>
-            </form>
-        </div>
     </body>
 </html>
