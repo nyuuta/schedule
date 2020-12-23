@@ -7,18 +7,16 @@
         <meta charset="utf-8"/>
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
 
-        <script
-    src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js" integrity="sha512-AbgDRHOu/IQcXzZZ6WrOliwI8umwOgLE7sZgRAsNzmcOWlQA8RhXQzBx99Ho0jlGPWIPoT9pwk4kmeeR4qsV/g==" crossorigin="anonymous"></script>
+        <script src="./js/jquery-3.5.1.min.js"></script>
         <script src="./js/main.js"></script>
         <script src="./js/utility/Calendar.js"></script>
         <script src="./js/utility/security.js"></script>
         <script src="./js/utility/const.js"></script>
-        <script src="./js/MainContainerComponent.js"></script>
-        <script src="./js/CalendarComponent.js"></script>
-        <script src="./js/ScheduleListComponent.js"></script>
+
+        <script src="./js/component/Component.js"></script>
+        <script src="./js/component/MainContainer.js"></script>
+        <script src="./js/component/CalendarComponent.js"></script>
+        <script src="./js/component/ScheduleComponent.js"></script>
 
         <link rel="stylesheet" href="./css/calendar.css">
         <link rel="stylesheet" href="./css/schedule.css">
@@ -26,7 +24,7 @@
     <body>
         <div id="container" class="container">
 
-            <div id="calendar-area" class="calendar">
+            <div id="calendar-component" class="calendar">
 
                 <div id="calendar-title" class="calendar-title">
                     <div class="button-area">
@@ -34,11 +32,7 @@
                             <i class="button-prev fas fa-caret-left fa-4x"></i>
                         </button>
                     </div>
-                    <div class="info-date">
-                        <div id="calendar-info-year" class="date-year">
-                        </div>
-                        <div id="calendar-info-month" class="date-month">
-                        </div>
+                    <div id="calendar-date-info" class="info-date">
                     </div>
                     <div class="button-area">
                         <button id="calendar-change-next">
@@ -54,7 +48,8 @@
                         </tr>
                     </table>
                 </div>
-            </div>
+
+            </div> <!-- div#calendar-component -->
 
             <!-- 区切り -->
             <div class="vertical-partition"></div>
@@ -62,19 +57,18 @@
             <div id="schedule-list-area" class="schedule-list-area">
                 <div id="schedule-list-fulldate" class="schedule-list-fulldate">
                 </div>
-                <div class="schedule-list-content">
-                    <form id="schedule-list" action="" method="">
-                    </form>
+                <div id="schedule-list-component" class="schedule-list-content">
+                    <div id="schedule-list">
+                    </div>
                 </div>
 
-                <div id="schedule-button-container">
-                    <button id="button-schedule-add" type="button">新規追加</button>
-                    <button id="button-schedule-delete" type="button">選択した予定をまとめて削除</button>
+                <div id="schedule-button-container" class="schedule-button-container">
+                    <button data-button-type="add" type="button">新規追加</button>
+                    <button data-button-type="delete" type="button">選択した予定をまとめて削除</button>
                 </div>
 
-                <div id="schedule-edit-container">
+                <div id="schedule-edit-container" class="schedule-edit-container">
                 </div>
-
             </div>
 
         </div><!-- .container -->

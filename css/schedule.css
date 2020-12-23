@@ -64,3 +64,11 @@
     margin-bottom: 30px;
     margin-left: 10px;
 }
+
+.schedule-list-content {
+    position: relative;
+}
+
+.schedule-button-container {
+    position: relative;
+}

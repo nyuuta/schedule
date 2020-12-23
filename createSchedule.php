@@ -28,10 +28,7 @@
         $stmt = $dbh->prepare("INSERT INTO schedules values (0, :user_id, :title, :date, :day)");
         $stmt->execute($_POST);
 
-        $stmt = $dbh->prepare("SELECT id, user_id, title, DATE_FORMAT(date, '%Y-%c-%e') as date FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?)");
-        $stmt->execute(array($year.$month));
-
-        $response["data"] = groupSchedulesByDate($stmt->fetchAll());
+        $response["data"]["id"] = $dbh->lastInsertId();
         echo(json_encode($response));
         exit;
     } catch (PDOException $e) {
