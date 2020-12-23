@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .calendar-table {
@@ -130,4 +131,16 @@
 
   td.calendar-selected-date {
       background-color: #F0E68C;
+  }
+
+  .operation-disabled {
+      z-index: 999;
+      position: absolute;
+      width: 100%;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+      bottom: 0px;
+      background-color: gray;
+      opacity: 0.2;
   }
