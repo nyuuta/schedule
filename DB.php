@@ -25,7 +25,7 @@
                 $user = "root";
                 $password = "secret";
 
-                $dns = "mysql:host=".$host.";dbname=".$database.";charset=utf8mb4";
+                $dns = "mysql:host=".$host.";dbname=".$database.";charset=utf8";
                 $option = [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
