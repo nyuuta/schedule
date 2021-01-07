@@ -2,6 +2,7 @@
 
     require_once "./src/controller/PreRegisterController.php";
     require_once "./src/controller/RegisterController.php";
+    require_once "./src/controller/LoginController.php";
     require_once "./src/controller/ErrorHandlingController.php";
 
     $reqUri = $_SERVER["REQUEST_URI"];
@@ -46,6 +47,14 @@
         case "/already-register-error": 
             $inst = new ErrorHandlingController();
             $inst->errorAlreadyRegistered();
+            break;
+        case "/login": 
+            $inst = new LoginController();
+            if ($reqMethod == "POST") {
+                $inst->login();
+            } else {
+                $inst->show();
+            }
             break;
         default :
             $inst = new ErrorHandlingController();

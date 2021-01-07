@@ -40,5 +40,41 @@
                 throw $e;
             }
         }
+
+        public function login($mail, $password) {
+
+            $this->mail = $mail;
+            $this->password = $password;
+
+            try {
+                $dbh = DB::singleton()->get();
+
+                $stmt = $dbh->prepare("SELECT * FROM users WHERE mail = ?");
+                $stmt->bindValue(1, $this->mail);
+                $stmt->execute();
+                $user = $stmt->fetch();
+
+                // メールアドレスが存在しない場合は失敗
+                if ($user === false) {
+                    return false;
+                }
+
+                // パスワードが不一致の場合は失敗
+                if (!password_verify($password, $user["password"])) {
+                    return false;
+                }
+
+                return true;
+
+            } catch (PDOException $e) {
+                // DB例外は利用側に例外処理を任せる
+                Log::error($e->getMessage());
+                throw $e;
+            }
+        }
+
+        public function getID() {
+            return $this->id;
+        }
     }
 ?>
