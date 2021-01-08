@@ -3,6 +3,8 @@
     require_once "./src/controller/PreRegisterController.php";
     require_once "./src/controller/RegisterController.php";
     require_once "./src/controller/LoginController.php";
+    require_once "./src/controller/LogoutController.php";
+    require_once "./src/controller/HomeController.php";
     require_once "./src/controller/ErrorHandlingController.php";
 
     $reqUri = $_SERVER["REQUEST_URI"];
@@ -12,6 +14,10 @@
     $path = parse_url($url, PHP_URL_PATH);
 
     switch ($path) {
+        case "/":
+            $inst = new HomeController();
+            $inst->show();
+            break;
         case "/pre-register":
             $inst = new PreRegisterController();
             if ($reqMethod == "POST") {
@@ -54,6 +60,12 @@
                 $inst->login();
             } else {
                 $inst->show();
+            }
+            break;
+        case "/logout": 
+            $inst = new LogoutController();
+            if ($reqMethod == "POST") {
+                $inst->logout();
             }
             break;
         default :

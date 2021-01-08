@@ -57,9 +57,6 @@
          */
         public function login($mail, $password) {
 
-            $this->mail = $mail;
-            $this->password = $password;
-
             $success = true;
             $message = "";
 
@@ -67,7 +64,7 @@
                 $dbh = DB::singleton()->get();
 
                 $stmt = $dbh->prepare("SELECT * FROM users WHERE mail = ?");
-                $stmt->bindValue(1, $this->mail);
+                $stmt->bindValue(1, $mail);
                 $stmt->execute();
                 $user = $stmt->fetch();
 
@@ -110,8 +107,11 @@
                 $stmt->bindValue(1, $user["fault_count"], PDO::PARAM_INT);
                 $stmt->bindValue(2, $user["f_lock"], PDO::PARAM_BOOL);
                 $stmt->bindValue(3, $user["lock_expiration"], PDO::PARAM_INT);
-                $stmt->bindValue(4, $this->mail, PDO::PARAM_STR);
+                $stmt->bindValue(4, $mail, PDO::PARAM_STR);
                 $stmt->execute();
+
+                $this->mail = $mail;
+                $this->id = $user["id"];
 
                 return [$success, $message];
 
