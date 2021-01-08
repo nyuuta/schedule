@@ -27,7 +27,6 @@
 
             if (!CSRF::validate($token)) {
                 Helper::redirectTo("/server-error");
-                exit();
             }
 
             // 妥当なメールアドレスとパスワードが入力されていない場合はログイン画面へ戻る
@@ -38,8 +37,11 @@
 
             $user = new Users();
             try {
-                if (!$user->login($mail, $password)) {
-                    Session::set("message", "メールアドレスかパスワードが間違っています。");
+
+                list($success, $message) = $user->login($mail, $password);
+
+                if ($success === false) {
+                    Session::set("message", $message);
                     Session::set("mail", $mail);
                     Helper::redirectTo("/login");
                 } 

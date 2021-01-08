@@ -17,6 +17,14 @@
             mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
         }
 
+        public function sendAccountLockedMail() {
+            $subject = "アカウントロックのお知らせ";
+            $message = "ログイン失敗回数が一定を超えましたので、アカウントをロックしました。";
+            $headers = "From: from@example.com";
+
+            mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
+        }
+
         public function register($mail, $password) {
 
             $this->mail = $mail;
@@ -41,10 +49,19 @@
             }
         }
 
+        /**
+         * ログインを試行
+         * 
+         * @return [$success:boolean, $message:string]
+         * 
+         */
         public function login($mail, $password) {
 
             $this->mail = $mail;
             $this->password = $password;
+
+            $success = true;
+            $message = "";
 
             try {
                 $dbh = DB::singleton()->get();
@@ -56,15 +73,47 @@
 
                 // メールアドレスが存在しない場合は失敗
                 if ($user === false) {
-                    return false;
+                    return [false, "fail"];
                 }
 
-                // パスワードが不一致の場合は失敗
+                // アカウントロック状態の場合は期限をチェック
+                if ($user["f_lock"] == true) {
+                    if ($user["lock_expiration"] > time()) {
+                        // ロック継続中
+                        return [false, "lock"];
+                    } else  {
+                        // アンロック
+                        $user["fault_count"] = 0;
+                        $user["f_lock"] = false;
+                        $user["lock_expiration"] = 0;
+                    }
+                }
+
+                // // パスワードが不一致の場合は失敗、失敗回数を1増やす
                 if (!password_verify($password, $user["password"])) {
-                    return false;
+
+                    $success = false;
+                    $message = "fail";
+
+                    if (++$user["fault_count"] == 10) {
+                        // ロック状態
+                        $user["f_lock"] = true;
+                        $user["lock_expiration"] = time()+30*60;
+                        $message = "lock";
+
+                        $this->sendAccountLockedMail();
+                    }
                 }
 
-                return true;
+                // ロック・アンロック情報を更新
+                $stmt = $dbh->prepare("UPDATE users SET fault_count = ?, f_lock = ?, lock_expiration = ? WHERE mail = ?");
+                $stmt->bindValue(1, $user["fault_count"], PDO::PARAM_INT);
+                $stmt->bindValue(2, $user["f_lock"], PDO::PARAM_BOOL);
+                $stmt->bindValue(3, $user["lock_expiration"], PDO::PARAM_INT);
+                $stmt->bindValue(4, $this->mail, PDO::PARAM_STR);
+                $stmt->execute();
+
+                return [$success, $message];
 
             } catch (PDOException $e) {
                 // DB例外は利用側に例外処理を任せる
