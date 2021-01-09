@@ -7,10 +7,22 @@
     require_once "./src/helper/CSRF.php";
     require_once "./src/helper/Helper.php";
     require_once "./src/helper/Session.php";
+    require_once "./src/helper/message.php";
 
     class LoginController {
 
+        /**
+         * ログイン画面を表示
+         * 既にログイン済みの場合はトップへリダイレクト
+         * 
+         */
         public function show() {
+
+            $isLogin = Users::isLogin();
+
+            if ($isLogin === true) {
+                Helper::redirectTo("/");
+            }
 
             $message = Session::get("message");
             $mail = Session::get("mail");
@@ -31,16 +43,17 @@
 
             // 妥当なメールアドレスとパスワードが入力されていない場合はログイン画面へ戻る
             if ((!$mail = filter_input(INPUT_POST, "mail")) || (!$password = filter_input(INPUT_POST, "password"))) {
-                Session::set("message", "メールアドレスかパスワードが間違っています。");
+                Session::set("message", MSG_LOGIN_FAIL);
                 Helper::redirectTo("/login");
             }
 
             $user = new Users();
             try {
 
-                list($success, $message) = $user->login($mail, $password);
+                list($success, $type) = $user->login($mail, $password);
 
                 if ($success === false) {
+                    $message = ($type === "fail") ? MSG_LOGIN_FAIL : MSG_LOGIN_LOCK;
                     Session::set("message", $message);
                     Session::set("mail", $mail);
                     Helper::redirectTo("/login");
