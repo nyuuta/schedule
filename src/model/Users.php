@@ -2,6 +2,7 @@
 
     require_once "./DB.php";
     require_once "./Log.php";
+    require_once "./src/helper/Session.php";
 
     class Users {
 
@@ -19,7 +20,7 @@
 
         public function sendAccountLockedMail() {
             $subject = "アカウントロックのお知らせ";
-            $message = "ログイン失敗回数が一定を超えましたので、アカウントをロックしました。";
+            $message = "ログイン失敗回数が一定を超えましたので、アカウントをロックしました。\n30分後に再度お試しください。";
             $headers = "From: from@example.com";
 
             mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
@@ -59,6 +60,7 @@
 
             $success = true;
             $message = "";
+            $this->mail = $mail;
 
             try {
                 $dbh = DB::singleton()->get();
@@ -100,6 +102,8 @@
 
                         $this->sendAccountLockedMail();
                     }
+                } else {
+                    $user["fault_count"] = 0;
                 }
 
                 // ロック・アンロック情報を更新
@@ -124,6 +128,10 @@
 
         public function getID() {
             return $this->id;
+        }
+
+        public static function isLogin() {
+            return ! empty(Session::get("userID"));
         }
     }
 ?>
