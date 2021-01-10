@@ -27,7 +27,8 @@
             $message = Session::get("message");
             $mail = Session::get("mail");
 
-            Session::destroy();
+            Session::set("message", "");
+            Session::set("mail", "");
 
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/login.php");
         }

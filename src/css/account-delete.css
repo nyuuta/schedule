@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+form {
+    margin: 0;
+    padding: 0;
+}
+
+.account-delete-container {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.account-delete-container .title {
+    margin-top: 100px;
+    margin-bottom: 20px;
+}
+
+.account-delete-container .form input {
+    height: 35px;
+    width: 300px;
+    margin-bottom: 20px;
+    padding: 5px;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    border: 2px solid rgb(182, 175, 175);    
+    background-color:rgba(136, 132, 132, 0.1);
+    font-size: 20px;
+}
+
+.account-delete-container .message-area {
+    height: 50px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-size: 16px;
+    color: rgb(177, 11, 11);
+}

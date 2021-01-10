@@ -10,6 +10,12 @@
         private $mail;
         private $password;
 
+        public function __constructor($id = 0, $mail = "", $password = "") {
+            $this->id = $id;
+            $this->mail = $mail;
+            $this->password = $password;
+        }
+
         public function sendRegisterDoneMail() {
             $subject = "本登録完了のお知らせ";
             $message = "本登録が完了致しました。";
@@ -26,6 +32,14 @@
             mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
         }
 
+        public function sendAccountDeletedMail($mail) {
+            $subject = "アカウント削除完了のお知らせ";
+            $message = "アカウントの削除処理が完了致しました。";
+            $headers = "From: from@example.com";
+
+            mail(str_replace(array("\r", "\n"), "", $mail), $subject, $message, $headers);
+        }
+
         public function register($mail, $password) {
 
             $this->mail = $mail;
@@ -35,7 +49,7 @@
             try {
                 $dbh = DB::singleton()->get();
 
-                $stmt = $dbh->prepare("INSERT INTO users values (0, ?, ?)");
+                $stmt = $dbh->prepare("INSERT INTO users values (0, ?, ?, 0, 0, 0)");
                 $stmt->bindValue(1, $this->mail);
                 $stmt->bindValue(2, $this->password);
                 $stmt->execute();
@@ -132,6 +146,52 @@
 
         public static function isLogin() {
             return ! empty(Session::get("userID"));
+        }
+
+        public static function getUserID() {
+            $id = Session::get("userID");
+            return (empty($id) ? false : $id);
+        }
+
+        public function deleteAccount($id) {
+
+            try {
+                $dbh = DB::singleton()->get();
+
+                $stmt = $dbh->prepare("SELECT * FROM users WHERE id = ?");
+                $stmt->bindValue(1, $id);
+                $stmt->execute();
+                $user = $stmt->fetch();
+
+                $stmt = $dbh->prepare("DELETE FROM users WHERE id = ?");
+                $stmt->bindValue(1, $id);
+                $stmt->execute();
+
+                self::sendAccountDeletedMail($user["mail"]);
+            } catch (PDOException $e) {
+                // DB例外は利用側に例外処理を任せる
+                throw $e;
+            }
+        }
+
+        public static function identifyUserByPassword($id, $password) {
+            // $idでユーザ検索
+            try {
+                $dbh = DB::singleton()->get();
+                $stmt = $dbh->prepare("SELECT * FROM users WHERE id = ?");
+                $stmt->bindValue(1, $id);
+                $stmt->execute();
+                $user = $stmt->fetch();
+
+                if ($user === false) {
+                    return false;
+                }
+
+                return (password_verify($password, $user["password"]));
+            } catch (PDOException $e) {
+                // DB例外は利用側に例外処理を任せる
+                throw $e;
+            }
         }
     }
 ?>
