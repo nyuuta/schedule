@@ -4,6 +4,7 @@
     require_once "./src/controller/RegisterController.php";
     require_once "./src/controller/LoginController.php";
     require_once "./src/controller/LogoutController.php";
+    require_once "./src/controller/AccountDeleteController.php";
     require_once "./src/controller/HomeController.php";
     require_once "./src/controller/ErrorHandlingController.php";
 
@@ -66,6 +67,14 @@
             $inst = new LogoutController();
             if ($reqMethod == "POST") {
                 $inst->logout();
+            }
+            break;
+        case "/account-delete": 
+            $inst = new AccountDeleteController();
+            if ($reqMethod == "GET") {
+                $inst->show();
+            } else {
+                $inst->delete();
             }
             break;
         default :

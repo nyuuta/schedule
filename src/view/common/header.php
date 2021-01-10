@@ -21,6 +21,10 @@
                 </form>
             </div>
 
+            <div id="アカウント削除">
+                <button onclick="location.href='/account-delete'">アカウント削除</button>
+            </div>
+
         <?php else: ?>
 
             <div id="login">
