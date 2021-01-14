@@ -2,12 +2,14 @@
 
     require_once "./DB.php";
     require_once "./Log.php";
+    require_once "./src/helper/message.php";
 
     class PreUsers {
 
         private $id;
         private $mail;
         private $token;
+        private $enabled;
         private $expiration;
 
         public function sendTokenURLMail() {
@@ -31,10 +33,10 @@
                 $stmt = $dbh->prepare("SELECT * FROM pre_users WHERE mail = ?");
                 $stmt->bindValue(1, $this->mail);
                 $stmt->execute();
-                $result = $stmt->fetchAll();
+                $result = $stmt->fetch();
         
-                // 登録されていないメールアドレスの場合→新規仮登録し通知
-                if (empty($result)) {
+                // 仮登録されていないメールアドレスの場合は新しく仮登録
+                if ($result === false) {
                     $stmt = $dbh->prepare("INSERT INTO pre_users values (0, ?, ?, 1, ?)");
                     $stmt->bindValue(1, $this->mail);
                     $stmt->bindValue(2, $this->token);
@@ -42,16 +44,13 @@
                     $stmt->execute();
                     return true;
                 }
-        
-                // 以下、仮登録済み前提
 
-                // 本登録まで済ませている場合
-                if ($result[0]["enabled"] == 0) {
-                    // その旨をメッセージ表示するviewを展開
+                // 仮登録済みで、さらに本登録済みの場合は仮登録失敗
+                if ($result["enabled"] == 0) {
                     return false;
                 }
 
-                // 本登録がまだの場合は有効期限に問わず、トークンを再発行し通知
+                // 仮登録済みだが本登録がまだの場合は、有効期限に問わずトークンを再発行する
                 $stmt = $dbh->prepare("UPDATE pre_users SET token = ?, expiration = ? WHERE mail = ?");
                 $stmt->bindValue(1, $this->token);
                 $stmt->bindValue(2, $this->expiration);
@@ -63,6 +62,44 @@
                 Log::error($e->getMessage());
                 throw $e;
             }
+        }
+
+        /**
+         * 仮登録から本登録に進んだときのトークンが正しいかチェック
+         * 
+         * 失敗するのは以下のケース
+         * 1. トークンが存在しなかった場合
+         * 2. トークンの期限が切れている場合
+         * 3. 本登録が完了しているトークンだった場合
+         */
+        public function validateToken($token) {
+
+            try {
+                $dbh = DB::singleton()->get();
+        
+                $stmt = $dbh->prepare("SELECT * FROM pre_users WHERE token = ?");
+                $stmt->bindValue(1, $token);
+                $stmt->execute();
+                $user = $stmt->fetch();
+
+                if ( $user === false || $user["expiration"] < time() ) {
+                    return [false, MSG_INVALID_TOKEN];
+                }
+
+                if ( $user["enabled"] == 0) {
+                    return [false, MSG_REGISTERED_MAIL];
+                }
+
+            } catch (PDOException $e) {
+                throw $e;
+            }
+
+            $this->mail = $user["mail"];
+            return [true, ""];
+        }
+
+        public function getMail() {
+            return $this->mail;
         }
 
         private function generateToken() {
