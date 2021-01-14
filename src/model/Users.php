@@ -40,23 +40,31 @@
             mail(str_replace(array("\r", "\n"), "", $mail), $subject, $message, $headers);
         }
 
-        public function register($mail, $password) {
+        public function register($token, $password) {
 
-            $this->mail = $mail;
-            $this->password = password_hash($password, PASSWORD_BCRYPT);
+            // $this->mail = $mail;
+            // $this->password = password_hash($password, PASSWORD_BCRYPT);
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);;
         
             // DBにinsert
             try {
                 $dbh = DB::singleton()->get();
 
+                $stmt = $dbh->prepare("SELECT * FROM pre_users WHERE token = ?");
+                $stmt->bindValue(1, $token);
+                $stmt->execute();
+                $user = $stmt->fetch();
+
                 $stmt = $dbh->prepare("INSERT INTO users values (0, ?, ?, 0, 0, 0)");
-                $stmt->bindValue(1, $this->mail);
-                $stmt->bindValue(2, $this->password);
+                $stmt->bindValue(1, $user["mail"]);
+                $stmt->bindValue(2, $hashedPassword);
                 $stmt->execute();
 
-                $stmt = $dbh->prepare("UPDATE pre_users SET enabled = 0 WHERE mail = ?");
-                $stmt->bindValue(1, $this->mail);
+                $stmt = $dbh->prepare("UPDATE pre_users SET enabled = 0 WHERE token = ?");
+                $stmt->bindValue(1, $token);
                 $stmt->execute();
+
+                $this->mail = $user["mail"];
 
             } catch (PDOException $e) {
                 Log::error($e->getMessage());

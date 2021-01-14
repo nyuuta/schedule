@@ -4,6 +4,8 @@
     require_once "./Log.php";
     require_once "./src/model/Users.php";
     require_once "./src/model/PreUsers.php";
+    require_once "./src/helper/Session.php";
+    require_once "./src/helper/Helper.php";
 
     class RegisterController {
 
@@ -11,82 +13,70 @@
 
             session_start();
 
-            if (!isset($_GET["k"])) {
-                header("Location: http://192.168.99.100/token-error");
-                exit() ;
+            $isLogin = Users::isLogin();
+
+            if ($isLogin === true) {
+                Helper::redirectTo("/");
+                exit();
             }
 
-            $token = $_GET["k"];
+            // トークンが存在しない場合は不正扱い
+            if (!$token = filter_input(INPUT_GET, "k")) {
+                Helper::redirectTo("/");
+            }
 
+            $preUser = new PreUsers();
             try {
-                $dbh = DB::singleton()->get();
-        
-                $stmt = $dbh->prepare("SELECT * FROM pre_users WHERE token = ?");
-                $stmt->bindValue(1, $token);
-                $stmt->execute();
-                $userData = $stmt->fetch();
 
-                // 見つからなかった場合(適当なトークンだった場合)
-                if ($userData === false) {
-                    header("Location: http://192.168.99.100/token-error");
-                    exit() ;
-                }
-
-                // 見つかったが、本登録済みだった場合
-                if ($userData["enabled"] == 0) {
-                    header("Location: http://192.168.99.100/already-register-error");
-                    exit() ;
-                }
-
-                // 見つかり、仮登録済みだった場合で、かつ、トークンの期限が切れている場合
-                if ($userData["expiration"] < time()) {
-                    header("Location: http://192.168.99.100/token-error");
-                    exit() ;
+                list($success, $message) = $preUser->validateToken($token);
+                if ($success === false) {
+                    Helper::redirectTo("/");
                 }
 
             } catch (PDOException $e) {
-                header("Location: http://192.168.99.100/server-error");
-                exit() ;
+                Helper::redirectTo("/server-error");
             }
 
-            $_SESSION["mail"] = $userData["mail"];
-            $_SESSION["token"] = $userData["token"];
-            $message = (isset($_SESSION["errorMessage"]) ? $_SESSION["errorMessage"] : "");
-            include($_SERVER["DOCUMENT_ROOT"]."/src/view/register.php");
-        }
+            $message = Session::get("message");
+            Session::unset("message");
 
-        public function confirm() {
-            include($_SERVER["DOCUMENT_ROOT"]."/src/view/register-confirm.php");
+            include($_SERVER["DOCUMENT_ROOT"]."/src/view/register.php");
         }
 
         public function register() {
 
             session_start();
 
-            $url = "http://192.168.99.100/register?k=".$_SESSION["token"];
+            // CSRF対策のトークンチェック
+            $token = filter_input(INPUT_POST, "token");
 
-            // 有効なパスワードが設定されていなければ拒否
-            if (!isset($_POST["password"]) || !isset($_POST["password-confirm"])) {
-                $_SESSION["errorMessage"] = "無効なパスワードです。";
-                header("Location: ".$url);
-                exit() ;
+            if (!CSRF::validate($token)) {
+                Helper::redirectTo("/server-error");
             }
 
-            if (!$this->validate($_POST["password"], $_POST["password-confirm"])) {
-                $_SESSION["errorMessage"] = "無効なパスワードです。";
-                header("Location: ".$url);
-                exit() ;
+            $prevUrl = $_SERVER['HTTP_REFERER'];
+            $uri = parse_url($prevUrl, PHP_URL_PATH) . "?" . parse_url($prevUrl, PHP_URL_QUERY);
+            $userToken = explode("=", parse_url($prevUrl, PHP_URL_QUERY))[1];
+
+            // 妥当なパスワードが入力されていない場合は1つ前の画面へ戻る
+            if ((!$password = filter_input(INPUT_POST, "password")) || (!$passwordConfirm = filter_input(INPUT_POST, "password-confirm"))) {
+                Session::set("message", MSG_INVALID_PASSWORD);
+                Helper::redirectTo($uri);
             }
 
-            $userModel = new Users();
+            if (!$this->validate($password, $passwordConfirm)) {
+                Session::set("message", MSG_INVALID_PASSWORD);
+                Helper::redirectTo($uri);
+            }
+
+            $user = new Users();
             try {
-                $userModel->register($_SESSION["mail"], $_POST["password"]);
-                $userModel->sendRegisterDoneMail();
-                header("Location: http://192.168.99.100/register-confirm");
-                exit() ;
+                $user->register($userToken, $password);
+                $user->sendRegisterDoneMail();
+                Session::destroy();
+                Helper::redirectTo("/");
             } catch (PDOException $e) {
-                header("Location: http://192.168.99.100/server-error");
-                exit() ;
+                Helper::redirectTo("/server-error");
             }
         }
 
@@ -95,7 +85,7 @@
          */
         private function validate($password, $passwordConfirm) {
 
-            $pattern = "/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i";
+            $pattern = "/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,32}$/i";
 
             return (preg_match($pattern, $password) && ($password == $passwordConfirm));
         }

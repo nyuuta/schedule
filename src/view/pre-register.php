@@ -1,4 +1,8 @@
 <?php
+
+require_once "./src/helper/CSRF.php";
+require_once "./src/helper/Helper.php";
+
 ?>
 
 <html>
@@ -8,32 +12,43 @@
         <meta name="description" content="メールアドレスを仮登録するページ。" />
 
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+        <link rel="stylesheet" href="./src/css/header.css">
+        <link rel="stylesheet" href="./src/css/pre-register.css">
+
     </head>
     <body>
-        <div id="container" class="container">
+
+        <div>
+            <?php include($_SERVER["DOCUMENT_ROOT"]."/src/view/common/header.php"); ?>
+        </div>
+
+        <div id="container" class="pre-register-container">
+
+            <div class="title">
+                <h1>仮登録</h1>
+            </div>
 
             <div>
-                <h1>メールアドレスで仮登録する</h1>
                 <p>
-                    仮登録後、ご入力いただいたメールアドレス宛に本登録用URLを添付した<br>
-                    メールを送信致します。
+                    メールアドレスを仮登録後、ご入力いただいたメールアドレス宛に<br>
+                    本登録用URLを添付したメールを送信致します。
                 </p>
             </div>
 
             <div id="pre-register-form">
-                <form id="form-pre-register" method="POST" action="/pre-register">
+                <form class="form" id="form-pre-register" method="POST" action="/pre-register">
                     <div>
-                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?php echo($mail) ?>"></input>
+                        <input type="hidden" name="token" value="<?= Helper::h(CSRF::generate()) ?>"></input>
+                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::h($mail) ?>"></input>
                     </div>
                     <div>
-                        <button type="button" onclick="history.back()">もどる</button>
-                        <button type="submit">登録</button>
+                        <button type="submit">仮登録</button>
                     </div>
                 </form>
             </div>
 
-            <div>
-                <?php echo($message) ?>
+            <div class="message-area">
+                <?= Helper::h($message) ?>
             </div>
 
         </div><!-- .container -->

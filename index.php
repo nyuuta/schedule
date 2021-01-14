@@ -27,10 +27,6 @@
                 $inst->show();
             }
             break;
-        case "/pre-register-confirm":
-            $inst = new PreRegisterController();
-            $inst->confirm();
-            break;
         case "/register":
             $inst = new RegisterController();
             if ($reqMethod == "POST") {
@@ -39,21 +35,9 @@
                 $inst->show();
             }
             break;
-        case "/register-confirm":
-            $inst = new RegisterController();
-            $inst->confirm();
-            break;
         case "/server-error": 
             $inst = new ErrorHandlingController();
             $inst->error500();
-            break;
-        case "/token-error": 
-            $inst = new ErrorHandlingController();
-            $inst->errorInvalidToken();
-            break;
-        case "/already-register-error": 
-            $inst = new ErrorHandlingController();
-            $inst->errorAlreadyRegistered();
             break;
         case "/login": 
             $inst = new LoginController();

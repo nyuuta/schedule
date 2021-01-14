@@ -3,6 +3,10 @@
     require_once "./DB.php";
     require_once "./Log.php";
     require_once "./src/model/PreUsers.php";
+    require_once "./src/model/Users.php";
+    require_once "./src/helper/Session.php";
+    require_once "./src/helper/Helper.php";
+    require_once "./src/helper/message.php";
 
     class PreRegisterController {
 
@@ -10,15 +14,17 @@
 
             session_start();
 
-            // POST後、メールアドレス無効で画面に戻った時はメッセージと入力したメールアドレスを保持
-            $message = "";
-            $mail = "";
-            if (isset($_SESSION["errorMessage"])) {
-                $message = $_SESSION["errorMessage"];
-                $mail = $_SESSION["errorMail"];
+            $isLogin = Users::isLogin();
+
+            if ($isLogin === true) {
+                Helper::redirectTo("/");
             }
 
-            $_SESSION = array();
+            $message = Session::get("message");
+            $mail = Session::get("mail");
+
+            Session::unset("message");
+            Session::unset("mail");
 
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/pre-register.php");
         }
@@ -30,43 +36,40 @@
         public function preRegister() {
 
             session_start();
+    
+            // CSRF対策のトークンチェック
+            $token = filter_input(INPUT_POST, "token");
 
-            // 有効なメールアドレスが設定されていなければ拒否
-            if (!isset($_POST["mail"])) {
-                $_SESSION["errorMessage"] = "無効なメールアドレスです。";
-                $_SESSION["errorMail"] = "";
-                header("Location: http://192.168.99.100/pre-register");
-                exit() ;
+            if (!CSRF::validate($token)) {
+                Helper::redirectTo("/");
             }
 
-            if (!$this->validate($_POST["mail"])) {
-                $_SESSION["errorMessage"] = "無効なメールアドレスです。";
-                $_SESSION["errorMail"] = $_POST["mail"];
-                header("Location: http://192.168.99.100/pre-register");
-                exit() ;
+            // 妥当なメールアドレスが入力されていない場合はログイン画面へ戻る
+            if ((!$mail = filter_input(INPUT_POST, "mail")) || (!$this->validate($mail))) {
+                Session::set("message", MSG_INVALID_MAIL);
+                Session::set("mail", $mail);
+                Helper::redirectTo("/pre-register");
             }
 
             $preUsersModel = new PreUsers();
             try {
                 // 仮登録に成功した場合はメール送信後遷移
-                if ($preUsersModel->preRegister($_POST["mail"])) {
+                $success = $preUsersModel->preRegister($mail);
+                if ($success === true) {
                     $preUsersModel->sendTokenURLMail();
-                    header("Location: http://192.168.99.100/pre-register-confirm");
-                    exit() ;
+                    Helper::redirectTo("/");
                 } else {
-                    $_SESSION["errorMessage"] = "本登録が完了しているメールアドレスです。";
-                    $_SESSION["errorMail"] = $_POST["mail"];
-                    header("Location: http://192.168.99.100/pre-register");
-                    exit() ;
+                    Session::set("message", MSG_REGISTERED_MAIL);
+                    Session::set("mail", $mail);
+                    Helper::redirectTo("/pre-register");
                 }
             } catch (PDOException $e) {
-                header("Location: http://192.168.99.100/server-error");
-                exit() ;
+                Helper::redirectTo("/server-error");
             }
         }
 
         /**
-         * 入力値のバリデーション
+         * メールアドレスのバリデーション
          */
         private function validate($mail) {
 
