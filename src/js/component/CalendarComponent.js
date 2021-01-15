@@ -40,7 +40,9 @@ class CalendarComponent extends Component {
         this.deferred = new $.Deferred();
 
         this.getSchedulesFromServer();
+
         this.deferred.promise().then(() => {
+            
             super.notify("calendarChanged", {newDateObj: this.selectedDateObj, schedules: this.schedules});
         });
     }
@@ -57,7 +59,7 @@ class CalendarComponent extends Component {
             _this.calendarData = (new Calendar(_this.dateObjOfDisplayedCalendar.getFullYear(), _this.dateObjOfDisplayedCalendar.getMonth())).create();
             _this.checkDateInRange();
 
-            _this.selectedDateObj.setMonth( _this.dateObjOfDisplayedCalendar.getMonth());
+            _this.selectedDateObj.setMonth( _this.selectedDateObj.getMonth()+changeValue);
             _this.selectedDateObj.setDate(1);
             
             this.deferred = new $.Deferred();
@@ -93,7 +95,9 @@ class CalendarComponent extends Component {
         super.findElement("#calendar-change-next").prop("disabled", this.nextButtonDisabled);
 
         this.renderCalendar();
+
         this.renderSchedulesToCalendar();
+
         this.renderHighlightToSelectedDate();
     }
 
@@ -105,7 +109,7 @@ class CalendarComponent extends Component {
             <div class="date-year">
                 ${this.dateObjOfDisplayedCalendar.getFullYear()}
             </div>
-            <div class="date-year">
+            <div class="date-month">
                 ${this.dateObjOfDisplayedCalendar.getMonth()+1}
             </div>
         `;
@@ -154,6 +158,7 @@ class CalendarComponent extends Component {
 
         for (let keyDateStr in this.schedules) {
             for (let schedule of this.schedules[keyDateStr]) {
+
                 listElmStr += `<li id="${escapeHTML(schedule.id)}">${escapeHTML(schedule.title)}</li>`;
                 if (++count == 2) {
                     break;
@@ -174,7 +179,7 @@ class CalendarComponent extends Component {
      */
     renderHighlightToSelectedDate() {
 
-        let dateStr = `${this.selectedDateObj.getFullYear()}-${(this.selectedDateObj.getMonth())}-${this.selectedDateObj.getDate()}`;
+        let dateStr = `${this.selectedDateObj.getFullYear()}-${(this.selectedDateObj.getMonth()+1)}-${this.selectedDateObj.getDate()}`;
 
         super.findElement(".calendar-selected-date").removeClass("calendar-selected-date");
         super.findElement("td[data-fulldate='" + dateStr + "']").addClass("calendar-selected-date");
@@ -200,7 +205,7 @@ class CalendarComponent extends Component {
 
         // 選択状態の(表示している)年月のスケジュール一覧を取得
         $.ajax({
-            url: "./readSchedule.php",
+            url: "/ajax/readSchedule",
             data: {
                 year: _this.selectedDateObj.getFullYear(),
                 month: _this.selectedDateObj.getMonth()
@@ -210,7 +215,7 @@ class CalendarComponent extends Component {
         }).done((response) => {
 
             if (response.status === "ng") {
-                alert(reponse.message);
+                alert(response.message);
                 return;
             }
 
@@ -219,7 +224,7 @@ class CalendarComponent extends Component {
 
         }).fail(function (response) {
             // 通信失敗時のコールバック処理
-            window.location.href = "/500.html";
+            window.location.href = "/server-error";
         }).always(function (response) {
             // 常に実行する処理
         });

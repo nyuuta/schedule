@@ -56,7 +56,7 @@ class ScheduleComponent extends Component {
 
             _this.checkedScheduleIDs = [];
             super.findElement("input[name='schedule']:checkbox:checked").each((index, el) => {
-                let id = $(el).val();
+                let id = parseInt($(el).val());
                 _this.checkedScheduleIDs.push(id);
             });
 
@@ -147,13 +147,12 @@ class ScheduleComponent extends Component {
             evt.preventDefault();
 
             let newName = $("input[name='content']").val();
-            let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
+            let dateStr = _this.selectedDateObj.getFullYear() + "-" + (_this.selectedDateObj.getMonth()+1) + "-" + _this.selectedDateObj.getDate();
             let day = _this.selectedDateObj.getDay();
 
             $.ajax({
-                url: "./createSchedule.php",
+                url: "/ajax/createSchedule",
                 data: {
-                    user_id: 1,
                     title: newName,
                     date: dateStr,
                     day: day
@@ -183,7 +182,7 @@ class ScheduleComponent extends Component {
     
             }).fail(function (response) {
                 // 通信失敗時のコールバック処理
-                window.location.href = "/500.html";
+                window.location.href = "/server-error";
             }).always(function (response) {
                 // 常に実行する処理
             });
@@ -197,11 +196,11 @@ class ScheduleComponent extends Component {
 
             let newName = $("input[name='content']").val();
             let id = _this.selectedSchedule.id;
-            let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
+            let dateStr = _this.selectedDateObj.getFullYear() + "-" + (_this.selectedDateObj.getMonth()+1) + "-" + _this.selectedDateObj.getDate();
             let day = _this.selectedDateObj.getDay();
 
             $.ajax({
-                url: "./updateSchedule.php",
+                url: "/ajax/updateSchedule",
                 data: {
                     id: id,
                     title: newName,
@@ -235,7 +234,7 @@ class ScheduleComponent extends Component {
     
             }).fail(function (response) {
                 // 通信失敗時のコールバック処理
-                window.location.href = "/500.html";
+                window.location.href = "/server-error";
             }).always(function (response) {
                 // 常に実行する処理
             });
@@ -247,13 +246,10 @@ class ScheduleComponent extends Component {
             evt.stopPropagation();
             evt.preventDefault();
 
-            let newName = $("input[name='content']").val();
             let ids = _this.checkedScheduleIDs;
-            let dateStr = _this.selectedDateObj.getFullYear() + "-" + _this.selectedDateObj.getMonth() + "-" + _this.selectedDateObj.getDate();
-            let day = _this.selectedDateObj.getDay();
 
             $.ajax({
-                url: "./deleteSchedule.php",
+                url: "/ajax/deleteSchedule",
                 data: {
                     ids: ids,
                 },
@@ -279,7 +275,7 @@ class ScheduleComponent extends Component {
     
             }).fail(function (response) {
                 // 通信失敗時のコールバック処理
-                window.location.href = "/500.html";
+                window.location.href = "/server-error";
             }).always(function (response) {
                 // 常に実行する処理
             });
