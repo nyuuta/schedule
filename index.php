@@ -7,6 +7,8 @@
     require_once "./src/controller/AccountDeleteController.php";
     require_once "./src/controller/HomeController.php";
     require_once "./src/controller/ErrorHandlingController.php";
+    require_once "./src/controller/MainController.php";
+    require_once "./src/controller/AjaxScheduleController.php";
 
     $reqUri = $_SERVER["REQUEST_URI"];
     $reqMethod = $_SERVER["REQUEST_METHOD"];
@@ -60,6 +62,26 @@
             } else {
                 $inst->delete();
             }
+            break;
+        case "/main": 
+            $inst = new MainController();
+            $inst->show();
+            break;
+        case "/ajax/createSchedule": 
+            $inst = new AjaxScheduleController();
+            $inst->create();
+            break;
+        case "/ajax/readSchedule": 
+            $inst = new AjaxScheduleController();
+            $inst->read();
+            break;
+        case "/ajax/updateSchedule": 
+            $inst = new AjaxScheduleController();
+            $inst->update();
+            break;
+        case "/ajax/deleteSchedule": 
+            $inst = new AjaxScheduleController();
+            $inst->delete();
             break;
         default :
             $inst = new ErrorHandlingController();

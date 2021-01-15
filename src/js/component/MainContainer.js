@@ -27,7 +27,7 @@ class MainContainer extends Component {
         let scheduleComponent = new ScheduleComponent(this.findElement("#schedule-list-area"));
         super.registerSubComponent("scheduleComponent", scheduleComponent);
 
-        scheduleComponent.registerObserver("scheduleChangeed", this, this.scheduleChangeEventHandler);
+        scheduleComponent.registerObserver("scheduleChanged", this, this.scheduleChangeEventHandler);
         scheduleComponent.registerObserver("operationDisabledChange", this, this.operationDisabledEventHandler);
     }
 
@@ -62,6 +62,7 @@ class MainContainer extends Component {
      * カレンダーが更新された場合は選択状態の日付とスケジュールを通知
      */
     calendarChangeEventHandler(notification) {
+
         this.selectedDateObj = notification.newDateObj;
         this.schedules = notification.schedules;
 
@@ -81,7 +82,7 @@ class MainContainer extends Component {
      */
     scheduleChangeEventHandler(notification) {
 
-        let dateStr = this.selectedDateObj.getFullYear()+"-"+this.selectedDateObj.getMonth()+"-"+this.selectedDateObj.getDate();
+        let dateStr = this.selectedDateObj.getFullYear()+"-"+(this.selectedDateObj.getMonth()+1)+"-"+this.selectedDateObj.getDate();
         this.schedules[dateStr] = notification.schedules;
 
         this.subComponents.calendarComponent.setSchedules(this.schedules);
@@ -104,11 +105,12 @@ class MainContainer extends Component {
 
     getSchedulesOfSelectedDate() {
         let schedulesOfSelectedDate = [];
-        let formatedDateString = this.selectedDateObj.getFullYear() + "-" + this.selectedDateObj.getMonth() + "-" + this.selectedDateObj.getDate();
+        let formatedDateString = this.selectedDateObj.getFullYear() + "-" + (this.selectedDateObj.getMonth()+1) + "-" + this.selectedDateObj.getDate();
 
         if (Object.keys(this.schedules).includes(formatedDateString)) {
             schedulesOfSelectedDate = this.schedules[formatedDateString];
         }
+
         return schedulesOfSelectedDate;
     }
 }

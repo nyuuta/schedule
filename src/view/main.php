@@ -1,27 +1,39 @@
 <?php
 
+require_once "./src/helper/CSRF.php";
+require_once "./src/helper/Helper.php";
+
 ?>
 
 <html>
     <head>
         <meta charset="utf-8"/>
+        <title>メイン - Calendar</title>
+        <meta name="description" content="メインページ" />
+
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+        <link rel="stylesheet" href="./src/css/header.css">
 
-        <script src="./js/jquery-3.5.1.min.js"></script>
-        <script src="./js/main.js"></script>
-        <script src="./js/utility/Calendar.js"></script>
-        <script src="./js/utility/security.js"></script>
-        <script src="./js/utility/const.js"></script>
+        <script src="./src/js/jquery-3.5.1.min.js"></script>
+        <script src="./src/js/main.js"></script>
+        <script src="./src/js/utility/Calendar.js"></script>
+        <script src="./src/js/utility/security.js"></script>
+        <script src="./src/js/utility/const.js"></script>
 
-        <script src="./js/component/Component.js"></script>
-        <script src="./js/component/MainContainer.js"></script>
-        <script src="./js/component/CalendarComponent.js"></script>
-        <script src="./js/component/ScheduleComponent.js"></script>
+        <script src="./src/js/component/Component.js"></script>
+        <script src="./src/js/component/MainContainer.js"></script>
+        <script src="./src/js/component/CalendarComponent.js"></script>
+        <script src="./src/js/component/ScheduleComponent.js"></script>
 
-        <link rel="stylesheet" href="./css/calendar.css">
-        <link rel="stylesheet" href="./css/schedule.css">
+        <link rel="stylesheet" href="./src/css/calendar.css">
+        <link rel="stylesheet" href="./src/css/schedule.css">
     </head>
     <body>
+
+        <div>
+            <?php include($_SERVER["DOCUMENT_ROOT"]."/src/view/common/header.php"); ?>
+        </div>
+
         <div id="container" class="container">
 
             <div id="calendar-component" class="calendar">
