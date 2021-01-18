@@ -19,7 +19,7 @@
          * ログインしていない場合はトップへリダイレクト
          * 
          */
-        public function show() {
+        public static function show() {
 
             $isLogin = Users::isLogin();
 
@@ -33,7 +33,7 @@
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/account-delete.php");
         }
 
-        public function delete() {
+        public static function delete() {
 
             // CSRF対策のトークンチェック
             $token = filter_input(INPUT_POST, "token");

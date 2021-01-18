@@ -14,7 +14,7 @@
 
     class PreRegisterController {
 
-        public function show() {
+        public static function show() {
 
             session_start();
 
@@ -33,11 +33,11 @@
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/pre-register.php");
         }
 
-        public function confirm() {
+        public static function confirm() {
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/pre-register-confirm.php");
         }
 
-        public function preRegister() {
+        public static function preRegister() {
 
             session_start();
     
@@ -49,7 +49,7 @@
             }
 
             // 妥当なメールアドレスが入力されていない場合はログイン画面へ戻る
-            if ((!$mail = filter_input(INPUT_POST, "mail")) || (!$this->validate($mail))) {
+            if ((!$mail = filter_input(INPUT_POST, "mail")) || (!self::validate($mail))) {
                 Session::set("message", MSG_INVALID_MAIL);
                 Session::set("mail", $mail);
                 Helper::redirectTo("/pre-register");
@@ -75,7 +75,7 @@
         /**
          * メールアドレスのバリデーション
          */
-        private function validate($mail) {
+        private static function validate($mail) {
 
             $pattern = "/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/";
 

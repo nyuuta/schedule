@@ -9,7 +9,7 @@
 
     class LogoutController {
 
-        public function logout() {
+        public static function logout() {
 
             // CSRF対策のトークンチェック
             $token = filter_input(INPUT_POST, "token");

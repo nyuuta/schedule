@@ -7,7 +7,7 @@
 
     class MainController {
 
-        public function show() {
+        public static function show() {
 
             $isLogin = Users::isLogin();
             if ($isLogin === false) {
