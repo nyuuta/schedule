@@ -1,6 +1,6 @@
 <?php
 
-    require_once "./src/helper/Log.php";
+    namespace app\controller;
 
     class ErrorHandlingController {
 

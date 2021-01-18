@@ -1,16 +1,7 @@
 <?php
 
-    require_once "./src/controller/PreRegisterController.php";
-    require_once "./src/controller/RegisterController.php";
-    require_once "./src/controller/LoginController.php";
-    require_once "./src/controller/LogoutController.php";
-    require_once "./src/controller/AccountDeleteController.php";
-    require_once "./src/controller/HomeController.php";
-    require_once "./src/controller/ErrorHandlingController.php";
-    require_once "./src/controller/MainController.php";
-    require_once "./src/controller/AjaxScheduleController.php";
-
-    require_once "./src/controller/MailTestController.php";
+    require_once "vendor/autoload.php";
+    require_once "./src/helper/message.php";
 
     $dotenv = Dotenv\Dotenv::createImmutable($_SERVER["DOCUMENT_ROOT"]);
     $dotenv->load();
@@ -23,11 +14,11 @@
 
     switch ($path) {
         case "/":
-            $inst = new HomeController();
+            $inst = new app\controller\HomeController();
             $inst->show();
             break;
         case "/pre-register":
-            $inst = new PreRegisterController();
+            $inst = new app\controller\PreRegisterController();
             if ($reqMethod == "POST") {
                 $inst->preRegister();
             } else {
@@ -35,7 +26,7 @@
             }
             break;
         case "/register":
-            $inst = new RegisterController();
+            $inst = new app\controller\RegisterController();
             if ($reqMethod == "POST") {
                 $inst->register();
             } else {
@@ -43,11 +34,11 @@
             }
             break;
         case "/server-error": 
-            $inst = new ErrorHandlingController();
+            $inst = new app\controller\ErrorHandlingController();
             $inst->error500();
             break;
         case "/login": 
-            $inst = new LoginController();
+            $inst = new app\controller\LoginController();
             if ($reqMethod == "POST") {
                 $inst->login();
             } else {
@@ -55,13 +46,13 @@
             }
             break;
         case "/logout": 
-            $inst = new LogoutController();
+            $inst = new app\controller\LogoutController();
             if ($reqMethod == "POST") {
                 $inst->logout();
             }
             break;
         case "/account-delete": 
-            $inst = new AccountDeleteController();
+            $inst = new app\controller\AccountDeleteController();
             if ($reqMethod == "GET") {
                 $inst->show();
             } else {
@@ -69,31 +60,27 @@
             }
             break;
         case "/main": 
-            $inst = new MainController();
+            $inst = new app\controller\MainController();
             $inst->show();
             break;
         case "/ajax/createSchedule": 
-            $inst = new AjaxScheduleController();
+            $inst = new app\controller\AjaxScheduleController();
             $inst->create();
             break;
         case "/ajax/readSchedule": 
-            $inst = new AjaxScheduleController();
+            $inst = new app\controller\AjaxScheduleController();
             $inst->read();
             break;
         case "/ajax/updateSchedule": 
-            $inst = new AjaxScheduleController();
+            $inst = new app\controller\AjaxScheduleController();
             $inst->update();
             break;
         case "/ajax/deleteSchedule": 
-            $inst = new AjaxScheduleController();
+            $inst = new app\controller\AjaxScheduleController();
             $inst->delete();
             break;
-        case "/mail": 
-            $inst = new MailTestController();
-            $inst->mail();
-            break;
         default :
-            $inst = new ErrorHandlingController();
+            $inst = new app\controller\ErrorHandlingController();
             $inst->error404();
             break;
      }

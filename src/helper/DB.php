@@ -1,5 +1,10 @@
 <?php
 
+    namespace app\helper;
+
+    use PDO;
+    use PDOException;
+
     class DB {
 
         private static $dbh;

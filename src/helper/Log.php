@@ -1,5 +1,7 @@
 <?php
 
+    namespace app\helper;
+
     class Log {
 
         function __construct() {

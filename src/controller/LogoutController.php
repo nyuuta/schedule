@@ -1,9 +1,11 @@
 <?php
 
-    require_once "./src/helper/Log.php";
-    require_once "./src/helper/CSRF.php";
-    require_once "./src/helper/Helper.php";
-    require_once "./src/helper/Session.php";
+    namespace app\controller;
+
+    use app\helper\Log;
+    use app\helper\Session;
+    use app\helper\Helper;
+    use app\helper\CSRF;
 
     class LogoutController {
 

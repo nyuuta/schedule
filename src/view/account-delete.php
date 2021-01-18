@@ -1,7 +1,7 @@
 <?php
 
-    require_once "./src/helper/CSRF.php";
-    require_once "./src/helper/Helper.php";
+    use app\helper\CSRF;
+    use app\helper\Helper;
 
 ?>
 

@@ -1,7 +1,9 @@
 <?php
 
-    require_once "./src/helper/Log.php";
-    require_once "./src/model/Users.php";
+    namespace app\controller;
+
+    use app\model\Users;
+    use app\helper\Log;
 
     class HomeController {
 

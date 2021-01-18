@@ -1,5 +1,7 @@
 <?php
 
+    namespace app\helper;
+
     class Session {
 
         public static function set($key, $value) {

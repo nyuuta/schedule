@@ -1,10 +1,11 @@
 <?php
 
+    namespace app\helper;
+
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
 
-    require_once "vendor/autoload.php";
-    require_once "./src/helper/Log.php";
+    use app\helper\Log;
 
     class Mail {
 
