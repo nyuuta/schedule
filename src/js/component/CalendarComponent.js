@@ -224,6 +224,7 @@ class CalendarComponent extends Component {
 
         }).fail(function (response) {
             // 通信失敗時のコールバック処理
+            console.log(response);
             window.location.href = "/server-error";
         }).always(function (response) {
             // 常に実行する処理

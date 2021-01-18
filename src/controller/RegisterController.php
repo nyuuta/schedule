@@ -14,7 +14,7 @@
 
     class RegisterController {
 
-        public function show() {
+        public static function show() {
 
             session_start();
 
@@ -48,7 +48,7 @@
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/register.php");
         }
 
-        public function register() {
+        public static function register() {
 
             session_start();
 
@@ -69,7 +69,7 @@
                 Helper::redirectTo($uri);
             }
 
-            if (!$this->validate($password, $passwordConfirm)) {
+            if (!self::validate($password, $passwordConfirm)) {
                 Session::set("message", MSG_INVALID_PASSWORD);
                 Helper::redirectTo($uri);
             }
@@ -88,7 +88,7 @@
         /**
          * 入力値のバリデーション
          */
-        private function validate($password, $passwordConfirm) {
+        private static function validate($password, $passwordConfirm) {
 
             $pattern = "/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,32}$/i";
 

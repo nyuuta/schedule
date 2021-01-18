@@ -13,7 +13,7 @@
 
     class AjaxScheduleController {
 
-        public function read() {
+        public static function read() {
 
             session_start();
 
@@ -42,7 +42,7 @@
             }
 
             // 年月が妥当な数値ではない場合は失敗
-            if (!$this->validate($year, $month)) {
+            if (!self::validate($year, $month)) {
                 $response["status"] = "ng";
                 $response["message"] = "年月が不適切です。(年:1000~9999, 月:1~12)";
                 echo(json_encode($response));
@@ -53,7 +53,7 @@
                 $dbh = DB::singleton()->get();
                 $stmt = $dbh->prepare("SELECT id, user_id, title, DATE_FORMAT(date, '%Y-%c-%e') as date FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?) AND user_id = ?");
                 $stmt->execute(array($year.$month, $userID));
-                $response["schedules"] = $this->groupSchedulesByDate($stmt->fetchAll());
+                $response["schedules"] = self::groupSchedulesByDate($stmt->fetchAll());
                 echo(json_encode($response));
                 exit;
             } catch (PDOException $e) {
@@ -63,7 +63,7 @@
             }
         }
 
-        public function create() {
+        public static function create() {
 
             session_start();
 
@@ -92,7 +92,7 @@
             }
 
             // パラメータが妥当な数値ではない場合は失敗
-            list($success, $response["message"]) = $this->validateSchedule($title, $dateStr, $day);
+            list($success, $response["message"]) = self::validateSchedule($title, $dateStr, $day);
             if ($success === false) {
                 $response["status"] = "ng";
                 echo(json_encode($response));
@@ -118,7 +118,7 @@
             }
         }
 
-        public function update() {
+        public static function update() {
 
             session_start();
 
@@ -147,7 +147,7 @@
             }
 
             // パラメータが妥当な値ではない場合は失敗
-            list($success, $response["message"]) = $this->validateTitle($title);
+            list($success, $response["message"]) = self::validateTitle($title);
             if ($success === false) {
                 $response["status"] = "ng";
                 echo(json_encode($response));
@@ -170,7 +170,7 @@
             }
         }
 
-        public function delete() {
+        public static function delete() {
 
             session_start();
 
@@ -216,7 +216,7 @@
             }
         }
 
-        private function groupSchedulesByDate($schedules) {
+        private static function groupSchedulesByDate($schedules) {
             $groupedSchedules = array();
             foreach ($schedules as $schedule) {
                 $groupedSchedules[$schedule["date"]][] = $schedule;
@@ -229,7 +229,7 @@
          * 西暦年は1000～9999
          * 月は0～11
          */
-        private function validate($year, $month) {
+        private static function validate($year, $month) {
 
             if (!(preg_match("/^[0-9]+$/", $month) && $month >= 1 && $month <= 12)) {
                 return false;
@@ -247,7 +247,7 @@
          * date: 日付のフォーマット(yyyy年mm月dd日)
          * day: 0-6
          */
-        private function validateSchedule($title, $fulldate, $day) {
+        private static function validateSchedule($title, $fulldate, $day) {
 
             $messages = array();
             $success = false;
@@ -283,7 +283,7 @@
          * 入力値のバリデーション
          * title: 文字数が1文字以上32文字以内 ※空白文字のみの場合はNG
          */
-        private function validateTitle($title) {
+        private static function validateTitle($title) {
 
             $messages = array();
             $success = false;

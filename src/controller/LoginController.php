@@ -19,7 +19,7 @@
          * 既にログイン済みの場合はトップへリダイレクト
          * 
          */
-        public function show() {
+        public static function show() {
 
             $isLogin = Users::isLogin();
 
@@ -36,7 +36,7 @@
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/login.php");
         }
 
-        public function login() {
+        public static function login() {
 
             // CSRF対策のトークンチェック
             $token = filter_input(INPUT_POST, "token");

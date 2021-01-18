@@ -7,7 +7,7 @@
 
     class HomeController {
 
-        public function show() {
+        public static function show() {
 
             $isLogin = Users::isLogin();
 
