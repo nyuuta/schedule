@@ -1,8 +1,9 @@
 <?php
 
-    require_once "./src/helper/Log.php";
-    require_once "./src/model/Users.php";
-    require_once "./src/helper/Helper.php";
+    namespace app\controller;
+
+    use app\model\Users;
+    use app\helper\Helper;
 
     class MainController {
 

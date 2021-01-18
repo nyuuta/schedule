@@ -1,6 +1,8 @@
 <?php
 
-    require_once "./src/helper/Session.php";
+    namespace app\helper;
+
+    use app\helper\Session;
 
     class CSRF {
 

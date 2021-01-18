@@ -1,13 +1,16 @@
 <?php
 
-    require_once "./DB.php";
-    require_once "./src/helper/Log.php";
-    require_once "./src/model/Users.php";
-    require_once "./src/model/PreUsers.php";
-    require_once "./src/helper/CSRF.php";
-    require_once "./src/helper/Helper.php";
-    require_once "./src/helper/Session.php";
-    require_once "./src/helper/message.php";
+    namespace app\controller;
+
+    use app\helper\Log;
+    use app\helper\Session;
+    use app\helper\Helper;
+    use app\helper\DB;
+    use app\helper\CSRF;
+    use app\model\PreUsers;
+    use app\model\Users;
+
+    use PDOException;
 
     class LoginController {
 
@@ -39,7 +42,7 @@
             $token = filter_input(INPUT_POST, "token");
 
             if (!CSRF::validate($token)) {
-                Helper::redirectTo("/server-error");
+                Helper::redirectTo("/");
             }
 
             // 妥当なメールアドレスとパスワードが入力されていない場合はログイン画面へ戻る

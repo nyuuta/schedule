@@ -1,11 +1,15 @@
 <?php
 
-    require_once "./DB.php";
-    require_once "./src/helper/Log.php";
-    require_once "./src/model/Users.php";
-    require_once "./src/model/PreUsers.php";
-    require_once "./src/helper/Session.php";
-    require_once "./src/helper/Helper.php";
+    namespace app\controller;
+
+    use app\helper\Log;
+    use app\helper\Session;
+    use app\helper\Helper;
+    use app\helper\DB;
+    use app\model\PreUsers;
+    use app\model\Users;
+
+    use PDOException;
 
     class AjaxScheduleController {
 

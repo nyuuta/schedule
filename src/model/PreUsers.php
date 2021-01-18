@@ -1,13 +1,16 @@
 <?php
 
+    namespace app\model;
+
     use PHPMailer\PHPMailer\Exception;
 
-    require_once "./DB.php";
-    require_once "./src/helper/message.php";
-    require_once "./src/helper/Log.php";
+    use app\helper\Log;
+    use app\helper\Mail;
+    use app\helper\DB;
+    use app\model\CSRF;
 
-    require_once 'vendor/autoload.php';
-    require_once './src/helper/Mail.php';
+    use PDO;
+    use PDOException;
 
     class PreUsers {
 

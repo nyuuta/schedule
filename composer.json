@@ -2,5 +2,11 @@
     "require-dev": {
         "phpmailer/phpmailer": "^6.2",
         "vlucas/phpdotenv": "^5.2"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "app\\": "src/"
+        }
     }
 }

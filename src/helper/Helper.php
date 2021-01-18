@@ -1,5 +1,7 @@
 <?php
 
+    namespace app\helper;
+
     class Helper {
 
         public static function h($str) {
