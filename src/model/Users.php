@@ -1,8 +1,13 @@
 <?php
 
+    use PHPMailer\PHPMailer\Exception;
+
     require_once "./DB.php";
-    require_once "./Log.php";
     require_once "./src/helper/Session.php";
+    require_once "./src/helper/Log.php";
+
+    require_once 'vendor/autoload.php';
+    require_once './src/helper/Mail.php';
 
     class Users {
 
@@ -17,33 +22,49 @@
         }
 
         public function sendRegisterDoneMail() {
-            $subject = "本登録完了のお知らせ";
-            $message = "本登録が完了致しました。";
-            $headers = "From: from@example.com";
 
-            mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
+            $subject = "本登録完了のお知らせ";
+            $body = "本登録が完了致しました。";
+            $to = str_replace(array("\r", "\n"), "", $this->mail);
+
+            try {
+                $mailer = new Mail();
+                $mailer->mail($to, $subject, $body);
+            } catch (Exception $e) {
+
+            }
         }
 
         public function sendAccountLockedMail() {
-            $subject = "アカウントロックのお知らせ";
-            $message = "ログイン失敗回数が一定を超えましたので、アカウントをロックしました。\n30分後に再度お試しください。";
-            $headers = "From: from@example.com";
 
-            mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
+            $subject = "アカウントロックのお知らせ";
+            $body = "ログイン失敗回数が一定を超えましたので、アカウントをロックしました。\n30分後に再度お試しください。";
+            $to = str_replace(array("\r", "\n"), "", $this->mail);
+
+            try {
+                $mailer = new Mail();
+                $mailer->mail($to, $subject, $body);
+            } catch (Exception $e) {
+
+            }
         }
 
         public function sendAccountDeletedMail($mail) {
-            $subject = "アカウント削除完了のお知らせ";
-            $message = "アカウントの削除処理が完了致しました。";
-            $headers = "From: from@example.com";
 
-            mail(str_replace(array("\r", "\n"), "", $mail), $subject, $message, $headers);
+            $subject = "アカウント削除完了のお知らせ";
+            $body = "アカウントの削除処理が完了致しました。";
+            $to = str_replace(array("\r", "\n"), "", $mail);
+
+            try {
+                $mailer = new Mail();
+                $mailer->mail($to, $subject, $body);
+            } catch (Exception $e) {
+
+            }
         }
 
         public function register($token, $password) {
 
-            // $this->mail = $mail;
-            // $this->password = password_hash($password, PASSWORD_BCRYPT);
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);;
         
             // DBにinsert
