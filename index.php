@@ -10,6 +10,11 @@
     require_once "./src/controller/MainController.php";
     require_once "./src/controller/AjaxScheduleController.php";
 
+    require_once "./src/controller/MailTestController.php";
+
+    $dotenv = Dotenv\Dotenv::createImmutable($_SERVER["DOCUMENT_ROOT"]);
+    $dotenv->load();
+
     $reqUri = $_SERVER["REQUEST_URI"];
     $reqMethod = $_SERVER["REQUEST_METHOD"];
 
@@ -82,6 +87,10 @@
         case "/ajax/deleteSchedule": 
             $inst = new AjaxScheduleController();
             $inst->delete();
+            break;
+        case "/mail": 
+            $inst = new MailTestController();
+            $inst->mail();
             break;
         default :
             $inst = new ErrorHandlingController();

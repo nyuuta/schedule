@@ -1,7 +1,7 @@
 <?php
 
     require_once "./DB.php";
-    require_once "./Log.php";
+    require_once "./src/helper/Log.php";
     require_once "./src/model/PreUsers.php";
     require_once "./src/model/Users.php";
     require_once "./src/helper/Session.php";

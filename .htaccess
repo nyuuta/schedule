@@ -1,6 +1,5 @@
 <IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
+RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule !\.(pdf|ico|gif|jpg|png|css|html|xml|js|php)$ index.php
+RewriteRule . index.php [L]
 </IfModule>

@@ -19,11 +19,11 @@
         public function get() {
             if (!isset(self::$dbh)) {
 
-                // TODO: コンフィグファイル作成
-                $host = "mysql";
-                $database = "schedule";
-                $user = "root";
-                $password = "secret";
+                // 環境変数から設定読み込み
+                $host = $_SERVER["DB_HOST"];
+                $database = $_SERVER["DB_NAME"];
+                $user = $_SERVER["DB_USER"];
+                $password = $_SERVER["DB_PASSWORD"];
 
                 $dns = "mysql:host=".$host.";dbname=".$database.";charset=utf8";
                 $option = [

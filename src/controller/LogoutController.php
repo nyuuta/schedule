@@ -1,6 +1,6 @@
 <?php
 
-    require_once "./Log.php";
+    require_once "./src/helper/Log.php";
     require_once "./src/helper/CSRF.php";
     require_once "./src/helper/Helper.php";
     require_once "./src/helper/Session.php";

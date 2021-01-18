@@ -7,7 +7,8 @@
         }
 
         static function error($message) {
-            error_log($message, 3, "./log.txt");
+
+            error_log($message, 3, $_SERVER["LOG_PATH"]);
         }
     }
 ?>

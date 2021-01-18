@@ -1,6 +1,6 @@
 <?php
 
-    require_once "./Log.php";
+    require_once "./src/helper/Log.php";
 
     class ErrorHandlingController {
 

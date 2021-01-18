@@ -1,8 +1,13 @@
 <?php
 
+    use PHPMailer\PHPMailer\Exception;
+
     require_once "./DB.php";
-    require_once "./Log.php";
     require_once "./src/helper/message.php";
+    require_once "./src/helper/Log.php";
+
+    require_once 'vendor/autoload.php';
+    require_once './src/helper/Mail.php';
 
     class PreUsers {
 
@@ -13,11 +18,18 @@
         private $expiration;
 
         public function sendTokenURLMail() {
-            $subject = "仮登録完了のお知らせ";
-            $message = "以下のURLから、本登録を行ってください。\n\n"."http://192.168.99.100/register?k=".$this->token;
-            $headers = "From: from@example.com";
 
-            mail(str_replace(array("\r", "\n"), "", $this->mail), $subject, $message, $headers);
+            $url = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"] . "/register?k=" . $this->token;
+            $subject = "仮登録完了のお知らせ";
+            $body = "以下のURLから、本登録を行ってください。\n\n" . $url;
+            $to = str_replace(array("\r", "\n"), "", $this->mail);
+
+            try {
+                $mailer = new Mail();
+                $mailer->mail($to, $subject, $body);
+            } catch (Exception $e) {
+
+            }
         }
 
         public function preRegister($mail) {
