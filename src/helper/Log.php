@@ -10,7 +10,8 @@
 
         static function error($message) {
 
-            error_log($message, 3, $_SERVER["LOG_PATH"]);
+            // error_log($message, 3, $_SERVER["LOG_PATH"]);
+            error_log($message);
         }
     }
 ?>
