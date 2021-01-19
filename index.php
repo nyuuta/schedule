@@ -4,9 +4,10 @@
     require_once "./src/helper/message.php";
 
     // phpdotenvを用いて、環境変数を.envファイルから読み込み
-    $dotenv = Dotenv\Dotenv::createImmutable($_SERVER["DOCUMENT_ROOT"]);
-    $dotenv->load();
-
+    if (file_exists(__DIR__ . "/.env")) {
+        $dotenv = Dotenv\Dotenv::createImmutable($_SERVER["DOCUMENT_ROOT"]);
+        $dotenv->load();
+    }
     // 以下、AltoRouterライブラリを用いたルーティング処理
 
     $router = new AltoRouter();
