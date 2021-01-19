@@ -39,7 +39,7 @@
             $token = filter_input(INPUT_POST, "token");
 
             if (!CSRF::validate($token)) {
-                Helper::redirectTo("/server-error");
+                Helper::redirectTo("/");
             }
 
             // ログインユーザIDの取得
@@ -67,7 +67,8 @@
                 Session::destroy();
                 Helper::redirectTo("/");
             } catch (PDOException $e) {
-                Helper::redirectTo("/server-error");
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
+                exit();
             }
         }
     }

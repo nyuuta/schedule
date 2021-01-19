@@ -68,7 +68,8 @@
                     Helper::redirectTo("/pre-register");
                 }
             } catch (PDOException $e) {
-                Helper::redirectTo("/server-error");
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
+                exit();
             }
         }
 

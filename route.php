@@ -16,8 +16,8 @@
         ["POST", "/ajax/createSchedule", "app\controller\AjaxScheduleController::create"],
         ["GET", "/ajax/readSchedule", "app\controller\AjaxScheduleController::read"],
         ["POST", "/ajax/updateSchedule", "app\controller\AjaxScheduleController::update"],
-        ["POST", "/ajax/deleteSchedule", "app\controller\AjaxScheduleController::delete"],
-        ["GET", "/server-error", "app\controller\ErrorHandlingController::error500"]
+        ["POST", "/ajax/deleteSchedule", "app\controller\AjaxScheduleController::delete"]
+        
     ];
 
 ?>
