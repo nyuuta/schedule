@@ -57,7 +57,7 @@
                 echo(json_encode($response));
                 exit;
             } catch (PDOException $e) {
-                header('HTTP/1.1 500 Internal Server Error');
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
             }
@@ -112,7 +112,7 @@
                 exit;
             } catch (PDOException $e) {
                 Log::error($e->getMessage());
-                header('HTTP/1.1 500 Internal Server Error');
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
             }
@@ -164,7 +164,7 @@
                 exit;
             } catch (PDOException $e) {
                 Log::error($e->getMessage());
-                header('HTTP/1.1 500 Internal Server Error');
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
             }
@@ -210,7 +210,7 @@
                 exit;
             } catch (PDOException $e) {
                 Log::error($e->getMessage());
-                header('HTTP/1.1 500 Internal Server Error');
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
             }

@@ -14,7 +14,7 @@
             // CSRF対策のトークンチェック
             $token = filter_input(INPUT_POST, "token");
             if (!CSRF::validate($token)) {
-                Helper::redirectTo("/server-error");
+                Helper::redirectTo("/");
             }
 
             // セッション情報を破棄
