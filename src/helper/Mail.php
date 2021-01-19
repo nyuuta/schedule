@@ -36,7 +36,7 @@
                 $mail->Password   = $password;
                 $mail->Port       = $port;
                 $mail->SMTPAuth   = true;
-                $mail->SMTPSecure = true;
+                $mail->SMTPSecure = $_SERVER["MAIL_SECURE"];
             
                 //受信者設定 
                 $mail->setFrom($from);  
