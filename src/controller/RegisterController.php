@@ -18,15 +18,22 @@
 
             session_start();
 
+            $logger = new \app\helper\Log();
+            $logger->info("START RegisterController@show");
+
             $isLogin = Users::isLogin();
 
             if ($isLogin === true) {
+                $logger->info("user isn't login");
+                $logger->info("END redirect to /");
                 Helper::redirectTo("/");
                 exit();
             }
 
             // トークンが存在しない場合は不正扱い
-            if (!$token = filter_input(INPUT_GET, "k")) {
+            if ( ! $token = filter_input(INPUT_GET, "k") ) {
+                $logger->info("token doesn't exist");
+                $logger->info("END redirect to /");
                 Helper::redirectTo("/");
             }
 
@@ -35,10 +42,14 @@
 
                 list($success, $message) = $preUser->validateToken($token);
                 if ($success === false) {
+                    $logger->info("invalid token");
+                    $logger->info("END redirect to /");
                     Helper::redirectTo("/");
                 }
 
             } catch (PDOException $e) {
+                $logger->error($e->getMessage());
+                $logger->error("END 500 internal server error");
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 exit();
             }
@@ -47,16 +58,22 @@
             Session::unset("message");
 
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/register.php");
+            $logger->info("END OK");
         }
 
         public static function register() {
 
             session_start();
 
+            $logger = new \app\helper\Log();
+            $logger->info("START RegisterController@register");
+
             // CSRF対策のトークンチェック
             $token = filter_input(INPUT_POST, "token");
 
-            if (!CSRF::validate($token)) {
+            if ( ! CSRF::validate($token) ) {
+                $logger->info("invalid csrf token");
+                $logger->info("END redirect to /");
                 Helper::redirectTo("/");
             }
 
@@ -67,11 +84,15 @@
             // 妥当なパスワードが入力されていない場合は1つ前の画面へ戻る
             if ((!$password = filter_input(INPUT_POST, "password")) || (!$passwordConfirm = filter_input(INPUT_POST, "password-confirm"))) {
                 Session::set("message", MSG_INVALID_PASSWORD);
+                $logger->info("invalid request parameter");
+                $logger->info("END redirect to " . $uri);
                 Helper::redirectTo($uri);
             }
 
             if (!self::validate($password, $passwordConfirm)) {
                 Session::set("message", MSG_INVALID_PASSWORD);
+                $logger->info("invalid request parameter");
+                $logger->info("END redirect to " . $uri);
                 Helper::redirectTo($uri);
             }
 
@@ -82,6 +103,8 @@
                 Session::destroy();
                 Helper::redirectTo("/");
             } catch (PDOException $e) {
+                $logger->error($e->getMessage());
+                $logger->error("END redirect to 500 internal server error");
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 exit();
             }

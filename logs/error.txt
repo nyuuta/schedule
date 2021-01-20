@@ -1,1 +1,0 @@
-abcabcSMTP Error: Could not connect to SMTP host.

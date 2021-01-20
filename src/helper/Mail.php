@@ -5,8 +5,6 @@
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
 
-    use app\helper\Log;
-
     class Mail {
 
         public function mail($to, $subject, $body) {
@@ -50,8 +48,7 @@
                 // 送信
                 $mail->send();
             } catch (Exception $e) {
-                // 例外は利用側に処理を任せる
-                Log::error($mail->ErrorInfo);
+                // 例外処理は利用側に任せる
                 throw $e;
             }
         }

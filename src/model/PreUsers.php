@@ -4,10 +4,8 @@
 
     use PHPMailer\PHPMailer\Exception;
 
-    use app\helper\Log;
     use app\helper\Mail;
     use app\helper\DB;
-    use app\model\CSRF;
 
     use PDO;
     use PDOException;
@@ -31,7 +29,7 @@
                 $mailer = new Mail();
                 $mailer->mail($to, $subject, $body);
             } catch (Exception $e) {
-
+                throw $e;
             }
         }
 
@@ -74,7 +72,6 @@
                 return true;
 
             } catch (PDOException $e) {
-                Log::error($e->getMessage());
                 throw $e;
             }
         }

@@ -2,16 +2,26 @@
 
     namespace app\helper;
 
+    use Monolog\Logger;
+    use Monolog\Handler\StreamHandler;
+
     class Log {
 
-        function __construct() {
+        private $logger;
 
+        function __construct() {
+            $this->logger = new Logger("AppLog");
+            $this->logger->pushHandler(new StreamHandler($_SERVER["DOCUMENT_ROOT"] . "/logs/app-log.log", Logger::INFO));
+            $this->logger->pushHandler(new StreamHandler("php://stderr", Logger::INFO));
         }
 
-        static function error($message) {
+        public function error($message) {
+            $this->logger->error($message);
+        }
 
-            // error_log($message, 3, $_SERVER["LOG_PATH"]);
-            error_log($message);
+        public function info($message) {
+
+            $this->logger->info($message);
         }
     }
 ?>
