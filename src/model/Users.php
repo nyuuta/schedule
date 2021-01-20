@@ -6,7 +6,6 @@
 
     use app\helper\Session;
     use app\helper\Mail;
-    use app\helper\Log;
     use app\helper\DB;
 
     use PDO;
@@ -34,7 +33,7 @@
                 $mailer = new Mail();
                 $mailer->mail($to, $subject, $body);
             } catch (Exception $e) {
-
+                throw $e;
             }
         }
 
@@ -48,7 +47,7 @@
                 $mailer = new Mail();
                 $mailer->mail($to, $subject, $body);
             } catch (Exception $e) {
-
+                throw $e;
             }
         }
 
@@ -62,7 +61,7 @@
                 $mailer = new Mail();
                 $mailer->mail($to, $subject, $body);
             } catch (Exception $e) {
-
+                throw $e;
             }
         }
 
@@ -91,7 +90,6 @@
                 $this->mail = $user["mail"];
 
             } catch (PDOException $e) {
-                Log::error($e->getMessage());
                 throw $e;
             }
         }
@@ -167,7 +165,6 @@
 
             } catch (PDOException $e) {
                 // DB例外は利用側に例外処理を任せる
-                Log::error($e->getMessage());
                 throw $e;
             }
         }

@@ -2,7 +2,6 @@
 
     namespace app\controller;
 
-    use app\helper\Log;
     use app\helper\Session;
     use app\helper\Helper;
     use app\helper\DB;
@@ -17,6 +16,9 @@
 
             session_start();
 
+            $logger = new \app\helper\Log();
+            $logger->info("START AjaxScheduleController@read");
+
             $response = array(
                 "status" => "ok",
                 "message" => "",
@@ -29,6 +31,7 @@
             if ($userID === false) {
                 $response["status"] = "ng";
                 $response["message"] = "ログインしてください。";
+                $logger->info("END user isn't login");
                 echo(json_encode($response));
                 exit;
             }
@@ -37,6 +40,7 @@
             if ((!$year = filter_input(INPUT_GET, "year")) || (!$month = filter_input(INPUT_GET, "month")+1)) {
                 $response["status"] = "ng";
                 $response["message"] = "年と月を入力してください。";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -45,6 +49,7 @@
             if (!self::validate($year, $month)) {
                 $response["status"] = "ng";
                 $response["message"] = "年月が不適切です。(年:1000~9999, 月:1~12)";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -54,9 +59,12 @@
                 $stmt = $dbh->prepare("SELECT id, user_id, title, DATE_FORMAT(date, '%Y-%c-%e') as date FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?) AND user_id = ?");
                 $stmt->execute(array($year.$month, $userID));
                 $response["schedules"] = self::groupSchedulesByDate($stmt->fetchAll());
+                $logger->info("END OK");
                 echo(json_encode($response));
                 exit;
             } catch (PDOException $e) {
+                $logger->error($e->getMessage());
+                $logger->error("END");
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
@@ -67,6 +75,9 @@
 
             session_start();
 
+            $logger = new \app\helper\Log();
+            $logger->info("START AjaxScheduleController@create");
+
             $response = array(
                 "status" => "ok",
                 "message" => "",
@@ -79,6 +90,7 @@
             if ($userID === false) {
                 $response["status"] = "ng";
                 $response["message"] = "ログインしてください。";
+                $logger->info("END user isn't login");
                 echo(json_encode($response));
                 exit;
             }
@@ -87,6 +99,7 @@
             if ((!$title = filter_input(INPUT_POST, "title")) || (!$dateStr = filter_input(INPUT_POST, "date")) || (!$day = filter_input(INPUT_POST, "day"))) {
                 $response["status"] = "ng";
                 $response["message"] = "スケジュールのタイトルと日付と曜日を入力してください。";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -95,6 +108,7 @@
             list($success, $response["message"]) = self::validateSchedule($title, $dateStr, $day);
             if ($success === false) {
                 $response["status"] = "ng";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -108,10 +122,12 @@
                 $stmt->execute(array($userID, $title, $dateStr, $day));
 
                 $response["data"]["id"] = $dbh->lastInsertId();
+                $logger->info("END OK");
                 echo(json_encode($response));
                 exit;
             } catch (PDOException $e) {
-                Log::error($e->getMessage());
+                $logger->error($e->getMessage());
+                $logger->error("END");
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
@@ -122,6 +138,9 @@
 
             session_start();
 
+            $logger = new \app\helper\Log();
+            $logger->info("START AjaxScheduleController@update");
+
             $response = array(
                 "status" => "ok",
                 "message" => "",
@@ -134,6 +153,7 @@
             if ($userID === false) {
                 $response["status"] = "ng";
                 $response["message"] = "ログインしてください。";
+                $logger->info("END user isn't login");
                 echo(json_encode($response));
                 exit;
             }
@@ -142,6 +162,7 @@
             if ( (!$title = filter_input(INPUT_POST, "title")) || (!$id = filter_input(INPUT_POST, "id")) ) {
                 $response["status"] = "ng";
                 $response["message"] = "スケジュールのタイトルを入力してください。";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -150,6 +171,7 @@
             list($success, $response["message"]) = self::validateTitle($title);
             if ($success === false) {
                 $response["status"] = "ng";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -159,11 +181,12 @@
                 $dbh = DB::singleton()->get();
                 $stmt = $dbh->prepare("UPDATE schedules SET title = ? WHERE id = ?");
                 $stmt->execute(array($title, $id));
-
+                $logger->info("END OK");
                 echo(json_encode($response));
                 exit;
             } catch (PDOException $e) {
-                Log::error($e->getMessage());
+                $logger->error($e->getMessage());
+                $logger->error("END");
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
@@ -174,6 +197,9 @@
 
             session_start();
 
+            $logger = new \app\helper\Log();
+            $logger->info("START AjaxScheduleController@delete");
+
             $response = array(
                 "status" => "ok",
                 "message" => "",
@@ -186,6 +212,7 @@
             if ($userID === false) {
                 $response["status"] = "ng";
                 $response["message"] = "ログインしてください。";
+                $logger->info("END user isn't login");
                 echo(json_encode($response));
                 exit;
             }
@@ -194,6 +221,7 @@
             if ( (!$ids = filter_input(INPUT_POST, "ids", FILTER_DEFAULT, FILTER_REQUIRE_ARRAY)) ) {
                 $response["status"] = "ng";
                 $response["message"] = "削除するスケジュールを選択してください。";
+                $logger->info("END invalid parameter");
                 echo(json_encode($response));
                 exit;
             }
@@ -205,11 +233,12 @@
                 $dbh = DB::singleton()->get();
                 $stmt = $dbh->prepare("DELETE FROM schedules WHERE id in ({$inClause})");
                 $stmt->execute($ids);
-        
+                $logger->info("END OK");
                 echo(json_encode($response));
                 exit;
             } catch (PDOException $e) {
-                Log::error($e->getMessage());
+                $logger->error($e->getMessage());
+                $logger->error("END");
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 echo(json_encode($response));
                 exit;
