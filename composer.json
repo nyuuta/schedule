@@ -4,7 +4,9 @@
         "phpmailer/phpmailer": "^6.2",
         "vlucas/phpdotenv": "^5.2",
         "altorouter/altorouter": "^2.0",
-        "monolog/monolog": "^2.2"
+        "monolog/monolog": "^2.2",
+        "php-webdriver/webdriver": "^1.9",
+        "phpunit/phpunit": "^9.5"
     },
 
     "autoload": {
