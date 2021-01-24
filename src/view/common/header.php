@@ -3,6 +3,7 @@
     use app\helper\CSRF;
     use app\helper\Helper;
     use app\model\Users;
+    use app\Auth\Authorization;
 
 ?>
 
@@ -14,7 +15,7 @@
 
     <div class="account-operation">
         
-        <?php if ($isLogin === true) : ?>
+        <?php if (Authorization::isLogin() === true) : ?>
 
             <div id="logout">
                 <form id="form-logout" method="POST" action="/logout">

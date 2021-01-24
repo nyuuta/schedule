@@ -10,7 +10,7 @@
 
         public static function logout() {
 
-            $logger = new app\helper\Log();
+            $logger = new \app\helper\Log();
             $logger->info("START LogoutController@logout");
 
             // CSRF対策のトークンチェック

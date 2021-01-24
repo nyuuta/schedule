@@ -10,6 +10,7 @@
     use app\model\Users;
 
     use PDOException;
+    use app\Auth\Authorization;
 
     class LoginController {
 
@@ -23,13 +24,7 @@
             $logger = new \app\helper\Log();
             $logger->info("START LoginController@show");
 
-            $isLogin = Users::isLogin();
-
-            if ($isLogin === true) {
-                $logger->info("user is already login");
-                $logger->info("END redirect to /");
-                Helper::redirectTo("/");
-            }
+            Authorization::checkAuth(false);
 
             $message = Session::get("message");
             $mail = Session::get("mail");
