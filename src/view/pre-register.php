@@ -39,7 +39,7 @@
                 <form class="form" id="form-pre-register" method="POST" action="/pre-register">
                     <div>
                         <input type="hidden" name="token" value="<?= Helper::h(CSRF::generate()) ?>"></input>
-                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::h($mail) ?>"></input>
+                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::old("mail") ?>"></input>
                     </div>
                     <div>
                         <button type="submit">仮登録</button>
@@ -48,7 +48,7 @@
             </div>
 
             <div class="message-area">
-                <?= Helper::h($message) ?>
+                <?= Helper::flashMessage() ?>
             </div>
 
         </div><!-- .container -->

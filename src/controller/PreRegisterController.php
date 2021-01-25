@@ -10,6 +10,7 @@
     use app\model\Users;
 
     use PDOException;
+    use app\Auth\Authorization;
 
     class PreRegisterController {
 
@@ -20,22 +21,11 @@
             $logger = new \app\helper\Log();
             $logger->info("START PreRegisterController@show");
 
-            $isLogin = Users::isLogin();
+            Authorization::checkAuth(false);
 
-            if ($isLogin === true) {
-                $logger->info("user isn't login");
-                $logger->info("END NG redirect to /");
-                Helper::redirectTo("/");
-            }
-
-            $message = Session::get("message");
-            $mail = Session::get("mail");
-
-            Session::unset("message");
-            Session::unset("mail");
+            $logger->info("END");
 
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/pre-register.php");
-            $logger->info("END OK");
         }
 
         public static function preRegister() {
