@@ -53,27 +53,11 @@
                 Helper::redirectTo("/pre-register");
             }
 
-            $preUsersModel = new PreUsers();
-            try {
-                // 仮登録に成功した場合はメール送信後遷移
-                $success = $preUsersModel->preRegister($mail);
-                if ($success === true) {
-                    $preUsersModel->sendTokenURLMail();
-                    $logger->info("END OK redirect to /");
-                    Helper::redirectTo("/");
-                } else {
-                    Session::set("message", MSG_REGISTERED_MAIL);
-                    Session::set("mail", $mail);
-                    $logger->info("mail is already registered");
-                    $logger->info("END NG redirect to /pre-register");
-                    Helper::redirectTo("/pre-register");
-                }
-            } catch (PDOException $e) {
-                $logger->error($e->getMessage());
-                $logger->error("END NG 500 internal server error");
-                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
-                exit();
-            }
+            $manager = new \app\model\AccountManager();
+            $manager->preRegister($mail);
+
+            $logger->info("END redirect to /.");
+            return Helper::redirectTo("/");
         }
 
         /**
