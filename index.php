@@ -13,6 +13,10 @@
         $dotenv = Dotenv\Dotenv::createImmutable($_SERVER["DOCUMENT_ROOT"]);
         $dotenv->load();
     }
+
+    // 大域例外ハンドラの登録
+    set_exception_handler(array(new app\Exception\ExceptionHandler, "handler"));
+
     // 以下、AltoRouterライブラリを用いたルーティング処理
 
     $router = new AltoRouter();

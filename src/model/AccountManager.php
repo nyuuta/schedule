@@ -3,7 +3,7 @@
     namespace app\model;
 
     use app\model\PreUsers;
-    use app\Exception\ExceptionHandler;
+    use app\Exception\ValidationException;
     use app\Exception\PreRegisterFailException;
     use app\Exception\SendMailException;
     use app\helper\Session;
@@ -22,6 +22,8 @@
         public function preRegister($mail) {
 
             $preUser = new PreUsers($mail);
+            $params = ["mail" => $mail];
+            $errors = ["mail" => MSG_REGISTERED_MAIL];
 
             try {
                 // 仮ユーザ情報がなければ新規作成
@@ -31,18 +33,16 @@
 
                 // 本登録済みの場合は仮登録失敗
                 if ( $preUser->isUnregistered() === false ) {
-                    Session::set("message", MSG_REGISTERED_MAIL);
-                    Session::set("mail", $mail);
-                    ExceptionHandler::handle(new PreRegisterFailException());
+                    throw (new ValidationException(implode("\n", $errors), 301))
+                        ->setParams($params)
+                        ->setErrors($errors);
                 }
 
                 // ワンタイムトークンの再発行をして完了通知を出す
                 $preUser->reissueOneTimeToken();
                 $preUser->sendTokenURLMail();
-            } catch (PDOException $e) {
-                ExceptionHandler::handle(new PreRegisterFailException());
-            } catch (Exception $e) {
-                ExceptionHandler::handle(new PreRegisterFailException());
+            } catch (PDOException | Exception $e) {
+                throw $e;
             }
         }
     }

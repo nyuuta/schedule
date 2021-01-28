@@ -17,6 +17,11 @@
             exit();
         }
 
+        public static function redirect($url) {
+            header("Location: " . $url);
+            exit();
+        }
+
         /**
          * フォームに保持された値を返す
          * $name : inputタグに付けられたname属性の名前
