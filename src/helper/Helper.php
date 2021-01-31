@@ -44,6 +44,14 @@
 
             return Helper::h($message);
         }
+
+        public static function showFlashMessage() {
+            $message = Session::get("message");
+            Session::unset("message");
+            $script = "<script>alert('" . Helper::h($message) . "');</script>";
+
+            return (empty($message)) ? "" : $script;
+        }
     }
 
 ?>

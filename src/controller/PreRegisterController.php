@@ -3,14 +3,11 @@
     namespace app\controller;
 
     use app\helper\CSRF;
-    use app\helper\Session;
     use app\helper\Helper;
-    use app\helper\DB;
-    use app\model\PreUsers;
-    use app\model\Users;
-
-    use PDOException;
+    use app\helper\Session;
     use app\Auth\Authorization;
+    use app\Validation\PreRegisterValidation;
+    use app\model\AccountManager;
 
     class PreRegisterController {
 
@@ -44,30 +41,20 @@
                 Helper::redirectTo("/");
             }
 
-            // 妥当なメールアドレスが入力されていない場合はログイン画面へ戻る
-            if ((!$mail = filter_input(INPUT_POST, "mail")) || (!self::validate($mail))) {
-                Session::set("message", MSG_INVALID_MAIL);
-                Session::set("mail", $mail);
-                $logger->info("invalid parameter");
-                $logger->info("END NG redirect to /pre-register");
-                Helper::redirectTo("/pre-register");
-            }
+            // メールアドレスのバリデーション
+            $mail = filter_input(INPUT_POST, "mail");
+            $validator = new PreRegisterValidation();
+            $validator->validate(["mail" => $mail]);
 
-            $manager = new \app\model\AccountManager();
+            // 仮登録処理
+            $manager = new AccountManager();
             $manager->preRegister($mail);
+
+            // 処理完了メッセージをセット
+            Session::set("message", MSG_DONE_PREREGISTER);
 
             $logger->info("END redirect to /.");
             return Helper::redirectTo("/");
-        }
-
-        /**
-         * メールアドレスのバリデーション
-         */
-        private static function validate($mail) {
-
-            $pattern = "/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/";
-
-            return preg_match($pattern, $mail);
         }
     }
 ?>

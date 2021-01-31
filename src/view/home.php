@@ -22,6 +22,8 @@
                 <?php include($_SERVER["DOCUMENT_ROOT"]."/src/view/common/header.php"); ?>
             </div>
 
+            <?= Helper::showFlashMessage() ?>
+
         </div><!-- .container -->
 
     </body>
