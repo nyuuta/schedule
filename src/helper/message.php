@@ -8,5 +8,6 @@
     define("MSG_REGISTERED_MAIL", "既に本登録されているメールアドレスです。");
     define("MSG_INVALID_TOKEN", "無効なトークンです。");
     define("MSG_INVALID_PASSWORD", "無効なパスワードです。8～32文字の半角英数字でパスワードをお決めください。");
+    define("MSG_DONE_PREREGISTER", "仮登録処理が完了しました。");
 
 ?>

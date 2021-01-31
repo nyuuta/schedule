@@ -11,6 +11,12 @@
         <title>仮登録 - Calendar</title>
         <meta name="description" content="メールアドレスを仮登録するページ。" />
 
+        <script src="./src/js/jquery-3.5.1.min.js"></script>
+        <script src="./src/js/pre-register.js"></script>
+
+        <script src="./src/js/component/Component.js"></script>
+        <script src="./src/js/component/PreRegisterComponent.js"></script>
+
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
         <link rel="stylesheet" href="./src/css/header.css">
         <link rel="stylesheet" href="./src/css/pre-register.css">
@@ -39,16 +45,16 @@
                 <form class="form" id="form-pre-register" method="POST" action="/pre-register">
                     <div>
                         <input type="hidden" name="token" value="<?= Helper::h(CSRF::generate()) ?>"></input>
-                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::h($mail) ?>"></input>
+                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::old("mail") ?>"></input>
                     </div>
                     <div>
-                        <button type="submit">仮登録</button>
+                        <button id="pre-register-button" type="submit">仮登録</button>
                     </div>
                 </form>
             </div>
 
-            <div class="message-area">
-                <?= Helper::h($message) ?>
+            <div id="message-area" class="message-area">
+                <?= Helper::flashMessage() ?>
             </div>
 
         </div><!-- .container -->

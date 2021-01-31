@@ -12,17 +12,22 @@
 
     class PreUsers {
 
-        private $id;
-        private $mail;
-        private $token;
-        private $enabled;
-        private $expiration;
+        private $id = 0;
+        private $mail = "";
+        private $token = "";
+        private $enabled = 1;
+        private $expiration = 0;
+        private $tokenExpiration = 60 * 60 * 1;
+
+        public function __construct($mail) {
+            $this->mail = $mail;
+        }
 
         public function sendTokenURLMail() {
 
             $url = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"] . "/register?k=" . $this->token;
-            $subject = "仮登録完了のお知らせ";
-            $body = "以下のURLから、本登録を行ってください。\n\n" . $url;
+            $subject = "【Caledule】仮登録完了のお知らせ";
+            $body = "入力いただいたメールアドレスでの仮登録が完了致しました。\n以下のURLから、本登録を行ってください。\n\n" . $url;
             $to = str_replace(array("\r", "\n"), "", $this->mail);
 
             try {
@@ -33,43 +38,66 @@
             }
         }
 
-        public function preRegister($mail) {
+        public function isUnregistered() {
+            return ( $this->enabled === 1 );
+        }
 
-            $oneDayTime = 60*60*24;
-            $this->token = $this->generateToken();
-            $this->expiration = time()+$oneDayTime;
-            $this->mail = $mail;
-        
-            // DBにinsert
+        /**
+         * pre-userの情報をSELECT文で取得
+         * 
+         */
+        public function getPreUserDataByMail() {
+
             try {
                 $dbh = DB::singleton()->get();
                 $stmt = $dbh->prepare("SELECT * FROM pre_users WHERE mail = ?");
-                $stmt->bindValue(1, $this->mail);
-                $stmt->execute();
-                $result = $stmt->fetch();
-        
-                // 仮登録されていないメールアドレスの場合は新しく仮登録
-                if ($result === false) {
-                    $stmt = $dbh->prepare("INSERT INTO pre_users values (0, ?, ?, 1, ?)");
-                    $stmt->bindValue(1, $this->mail);
-                    $stmt->bindValue(2, $this->token);
-                    $stmt->bindValue(3, $this->expiration);
-                    $stmt->execute();
-                    return true;
-                }
+                $stmt->execute([$this->mail]);
+                $preUser = $stmt->fetch();
+            } catch (PDOException $e) {
+                // 例外は利用側に処理を任せる
+                throw $e;
+            }
 
-                // 仮登録済みで、さらに本登録済みの場合は仮登録失敗
-                if ($result["enabled"] == 0) {
-                    return false;
-                }
+            // ユーザが存在しなかった場合はfalseを返却
+            if ($preUser === false) {
+                return false;
+            }
 
-                // 仮登録済みだが本登録がまだの場合は、有効期限に問わずトークンを再発行する
+            $this->id = $preUser["id"];
+            $this->mail = $preUser["mail"];
+            $this->token = $preUser["token"];
+            $this->enabled = $preUser["enabled"];
+            $this->expiration = $preUser["expiration"];
+
+            return true;
+        }
+
+        public function createPreUser() {
+            try {
+                $dbh = DB::singleton()->get();
+                $stmt = $dbh->prepare("INSERT INTO pre_users values (0, ?, ?, 1, ?)");
+                $stmt->execute([$this->mail, $this->token, $this->expiration]);
+                $this->id = $dbh->lastInsertId();
+            } catch (PDOException $e) {
+                // 例外は利用側に処理を任せる
+                throw $e;
+            }
+        }
+
+        public function reissueOneTimeToken() {
+
+            $this->token = $this->generateToken();
+            $this->expiration = time() + $this->tokenExpiration;
+
+            try {
+
+                $dbh = DB::singleton()->get();
+
                 $stmt = $dbh->prepare("UPDATE pre_users SET token = ?, expiration = ? WHERE mail = ?");
                 $stmt->bindValue(1, $this->token);
                 $stmt->bindValue(2, $this->expiration);
                 $stmt->bindValue(3, $this->mail);
                 $stmt->execute();
-                return true;
 
             } catch (PDOException $e) {
                 throw $e;
