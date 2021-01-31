@@ -18,11 +18,10 @@
         }
 
         public function handler($e) {
+            
+            $logger = new Log();
+            $logger->info($e->getMessage());
 
-            // echo(get_class($e));
-            // echo($e->getMessage());
-            // echo($e->getLine());
-            // echo($e->getTraceAsString());
             if ($e instanceof ValidationException) {
                 // ログ出力
 
@@ -39,9 +38,6 @@
                 // 直前ページへリダイレクト
                 Helper::redirect($_SERVER["HTTP_REFERER"]);
             } else {
-                $logger = new Log();
-                $logger->info($e->getMessage());
-
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 exit();
             }
