@@ -94,6 +94,27 @@
             }
         }
 
+        public function create($mail, $password) {
+
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);;
+        
+            // DBにinsert
+            try {
+                $dbh = DB::singleton()->get();
+
+                $stmt = $dbh->prepare("INSERT INTO users values (0, ?, ?, 0, 0, 0)");
+                $stmt->bindValue(1, $mail);
+                $stmt->bindValue(2, $hashedPassword);
+                $stmt->execute();
+
+                $this->id = $dbh->lastInsertId();
+                $this->mail = $mail;
+
+            } catch (PDOException $e) {
+                throw $e;
+            }
+        }
+
         /**
          * ログインを試行
          * 

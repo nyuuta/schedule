@@ -104,8 +104,69 @@
             }
         }
 
+        public function disablePreRegister() {
+
+            try {
+
+                $dbh = DB::singleton()->get();
+
+                $stmt = $dbh->prepare("UPDATE pre_users SET enabled = 0 WHERE token = ?");
+                $stmt->bindValue(1, $this->token);
+                $stmt->execute();
+
+            } catch (PDOException $e) {
+                throw $e;
+            }
+        }
+
+        public function getPreUserDataByToken() {
+
+            try {
+                $dbh = DB::singleton()->get();
+                $stmt = $dbh->prepare("SELECT * FROM pre_users WHERE token = ?");
+                $stmt->execute([$this->token]);
+                $preUser = $stmt->fetch();
+            } catch (PDOException $e) {
+                // 例外は利用側に処理を任せる
+                throw $e;
+            }
+
+            // ユーザが存在しなかった場合はfalseを返却
+            if ($preUser === false) {
+                return false;
+            }
+
+            $this->id = $preUser["id"];
+            $this->mail = $preUser["mail"];
+            $this->token = $preUser["token"];
+            $this->enabled = $preUser["enabled"];
+            $this->expiration = $preUser["expiration"];
+
+            return true;
+        }
+
         /**
-         * 仮登録から本登録に進んだときのトークンが正しいかチェック
+         * 本登録画面に進む際のトークンの妥当性チェック
+         * 
+         * 1. トークンの期限が切れている場合
+         * 2. 本登録が完了しているトークンだった場合
+         * この2パターンは失敗
+         */
+        public function validateOneTimeToken() {
+
+            if ( $this->expiration < time() ) {
+                return false;
+            }
+
+            if ( $this->enabled == 0) {
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * 仮登録から本登録に進むときのトークンが正しいかチェック
          * 
          * 失敗するのは以下のケース
          * 1. トークンが存在しなかった場合
@@ -144,6 +205,10 @@
 
         private function generateToken() {
             return bin2hex(random_bytes(16));
+        }
+
+        public function setToken($token) {
+            $this->token = $token;
         }
     }
 ?>
