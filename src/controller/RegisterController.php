@@ -65,33 +65,16 @@
             $validator = new RegisterValidation();
             $validator->validate(["password" => [$password, $passwordConfirm]]);
 
-            // 妥当なパスワードが入力されていない場合は1つ前の画面へ戻る
-            // if ((!$password = filter_input(INPUT_POST, "password")) || (!$passwordConfirm = filter_input(INPUT_POST, "password-confirm"))) {
-            //     Session::set("message", MSG_INVALID_PASSWORD);
-            //     $logger->info("invalid request parameter");
-            //     $logger->info("END redirect to " . $uri);
-            //     Helper::redirectTo($uri);
-            // }
+            // 本登録処理
+            $manager = new AccountManager();
+            $manager->register($oneTimeToken, $password);
 
-            // if (!self::validate($password, $passwordConfirm)) {
-            //     Session::set("message", MSG_INVALID_PASSWORD);
-            //     $logger->info("invalid request parameter");
-            //     $logger->info("END redirect to " . $uri);
-            //     Helper::redirectTo($uri);
-            // }
+            // 処理完了メッセージをセット
+            Session::destroy();
+            Session::set("message", MSG_DONE_REGISTER);
 
-            // $user = new Users();
-            // try {
-            //     $user->register($userToken, $password);
-            //     $user->sendRegisterDoneMail();
-            //     Session::destroy();
-            //     Helper::redirectTo("/");
-            // } catch (PDOException $e) {
-            //     $logger->error($e->getMessage());
-            //     $logger->error("END redirect to 500 internal server error");
-            //     header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
-            //     exit();
-            // }
+            $logger->info("END redirect to /.");
+            return Helper::redirectTo("/");
         }
 
         /**

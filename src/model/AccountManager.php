@@ -3,6 +3,7 @@
     namespace app\model;
 
     use app\model\PreUsers;
+    use app\model\Users;
     use app\Exception\ValidationException;
     use app\Exception\OneTimeTokenException;
     use app\helper\Session;
@@ -59,6 +60,33 @@
                 }
 
             } catch (PDOException $e) {
+                throw $e;
+            }
+        }
+
+        /**
+         * トークンとパスワードから本登録を行う
+         */
+        public function register($token, $password) {
+
+            try {
+
+                // 仮登録ユーザ情報の取得
+                $preUser = new PreUsers("");
+                $preUser->setToken($token);
+                $preUser->getPreUserDataByToken();
+
+                // 本登録ユーザ情報の作成
+                $user = new Users();
+                $user->create($preUser->getMail(), $password);
+
+                // 当該ユーザの仮登録を禁止
+                $preUser->disablePreRegister();
+
+                // メール送信
+                $user->sendRegisterDoneMail();
+                
+            } catch (PDOException | Exception $e) {
                 throw $e;
             }
         }

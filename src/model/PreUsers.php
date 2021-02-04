@@ -104,6 +104,21 @@
             }
         }
 
+        public function disablePreRegister() {
+
+            try {
+
+                $dbh = DB::singleton()->get();
+
+                $stmt = $dbh->prepare("UPDATE pre_users SET enabled = 0 WHERE token = ?");
+                $stmt->bindValue(1, $this->token);
+                $stmt->execute();
+
+            } catch (PDOException $e) {
+                throw $e;
+            }
+        }
+
         public function getPreUserDataByToken() {
 
             try {
