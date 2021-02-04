@@ -9,6 +9,8 @@
     use app\helper\DB;
     use app\model\PreUsers;
     use app\model\Users;
+    use app\Auth\Authorization;
+    use app\model\AccountManager;
 
     use PDOException;
 
@@ -21,42 +23,15 @@
             $logger = new \app\helper\Log();
             $logger->info("START RegisterController@show");
 
-            $isLogin = Users::isLogin();
+            // 非ログイン状態のみ許可
+            Authorization::checkAuth(false);
 
-            if ($isLogin === true) {
-                $logger->info("user isn't login");
-                $logger->info("END redirect to /");
-                Helper::redirectTo("/");
-                exit();
-            }
+            // URLに含まれるトークンの妥当性チェック
+            $token = filter_input(INPUT_GET, "k"); 
+            $manager = new AccountManager();
+            $manager->tokenValidation($token);
 
-            // トークンが存在しない場合は不正扱い
-            if ( ! $token = filter_input(INPUT_GET, "k") ) {
-                $logger->info("token doesn't exist");
-                $logger->info("END redirect to /");
-                Helper::redirectTo("/");
-            }
-
-            $preUser = new PreUsers();
-            try {
-
-                list($success, $message) = $preUser->validateToken($token);
-                if ($success === false) {
-                    $logger->info("invalid token");
-                    $logger->info("END redirect to /");
-                    Helper::redirectTo("/");
-                }
-
-            } catch (PDOException $e) {
-                $logger->error($e->getMessage());
-                $logger->error("END 500 internal server error");
-                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
-                exit();
-            }
-
-            $message = Session::get("message");
-            Session::unset("message");
-
+            // Viewの表示
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/register.php");
             $logger->info("END OK");
         }

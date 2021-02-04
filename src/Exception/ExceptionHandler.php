@@ -5,8 +5,9 @@
     use \app\helper\Log;
     use \app\helper\Helper;
     use \app\helper\Session;
-
+    
     use \app\Exception\ValidationException;
+    use \app\Exception\OneTimeTokenException;
 
     class ExceptionHandler {
 
@@ -37,7 +38,15 @@
 
                 // 直前ページへリダイレクト
                 Helper::redirect($_SERVER["HTTP_REFERER"]);
-            } else {
+            } else if ($e instanceof OneTimeTokenException) {
+                // メッセージ保持
+                foreach( $e->getErrors() as $key => $value) {
+                    Session::set("message", $value);
+                }
+
+                // 直前ページへリダイレクト
+                Helper::redirectTo("/");
+            }else {
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 exit();
             }

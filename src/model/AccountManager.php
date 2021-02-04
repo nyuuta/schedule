@@ -4,8 +4,7 @@
 
     use app\model\PreUsers;
     use app\Exception\ValidationException;
-    use app\Exception\PreRegisterFailException;
-    use app\Exception\SendMailException;
+    use app\Exception\OneTimeTokenException;
     use app\helper\Session;
 
     use PHPMailer\PHPMailer\Exception;
@@ -42,6 +41,24 @@
                 $preUser->reissueOneTimeToken();
                 $preUser->sendTokenURLMail();
             } catch (PDOException | Exception $e) {
+                throw $e;
+            }
+        }
+
+        public function tokenValidation($token) {
+
+            $errors = ["message" => MSG_INVALID_TOKEN_URL];
+
+            try {
+                // $token
+                $preUser = new PreUsers("");
+                $preUser->setToken($token);
+                if ($preUser->getPreUserDataByToken() === false || $preUser->validateOneTimeToken() === false) {
+                    throw (new OneTimeTokenException(implode("\n", $errors), 301))
+                        ->setErrors($errors);
+                }
+
+            } catch (PDOException $e) {
                 throw $e;
             }
         }

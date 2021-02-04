@@ -44,13 +44,13 @@
                         <input id="password-confirm" type="password" name="password-confirm" placeholder="パスワード(確認)" value=""></input>
                     </div>
                     <div>
-                        <button type="submit">登録</button>
+                        <button id="register-button" type="submit">登録</button>
                     </div>
                 </form>
             </div>
 
-            <div class="message-area">
-                <?= Helper::h($message) ?>
+            <div id="message-area" class="message-area">
+                <?= Helper::flashMessage() ?>
             </div>
 
         </div><!-- .container -->
