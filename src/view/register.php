@@ -11,6 +11,12 @@
         <title>本登録 - Calendar</title>
         <meta name="description" content="本登録用ページ。" />
 
+        <script src="./src/js/jquery-3.5.1.min.js"></script>
+        <script src="./src/js/register.js"></script>
+
+        <script src="./src/js/component/Component.js"></script>
+        <script src="./src/js/component/RegisterComponent.js"></script>
+
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
         <link rel="stylesheet" href="./src/css/header.css">
         <link rel="stylesheet" href="./src/css/register.css">
