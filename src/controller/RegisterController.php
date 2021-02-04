@@ -11,6 +11,7 @@
     use app\model\Users;
     use app\Auth\Authorization;
     use app\model\AccountManager;
+    use app\Validation\RegisterValidation;
 
     use PDOException;
 
@@ -52,37 +53,45 @@
                 Helper::redirectTo("/");
             }
 
-            $prevUrl = $_SERVER['HTTP_REFERER'];
+            // CSRFチェックを通り抜けた場合の直前のURL(本登録画面)からトークンを取得
+            $prevUrl = $_SERVER["HTTP_REFERER"];
             $uri = parse_url($prevUrl, PHP_URL_PATH) . "?" . parse_url($prevUrl, PHP_URL_QUERY);
-            $userToken = explode("=", parse_url($prevUrl, PHP_URL_QUERY))[1];
+            $oneTimeToken = explode("=", parse_url($prevUrl, PHP_URL_QUERY))[1];
+
+            // パスワードのバリデーション
+            $password = filter_input(INPUT_POST, "password");
+            $passwordConfirm = filter_input(INPUT_POST, "password-confirm");
+
+            $validator = new RegisterValidation();
+            $validator->validate(["password" => [$password, $passwordConfirm]]);
 
             // 妥当なパスワードが入力されていない場合は1つ前の画面へ戻る
-            if ((!$password = filter_input(INPUT_POST, "password")) || (!$passwordConfirm = filter_input(INPUT_POST, "password-confirm"))) {
-                Session::set("message", MSG_INVALID_PASSWORD);
-                $logger->info("invalid request parameter");
-                $logger->info("END redirect to " . $uri);
-                Helper::redirectTo($uri);
-            }
+            // if ((!$password = filter_input(INPUT_POST, "password")) || (!$passwordConfirm = filter_input(INPUT_POST, "password-confirm"))) {
+            //     Session::set("message", MSG_INVALID_PASSWORD);
+            //     $logger->info("invalid request parameter");
+            //     $logger->info("END redirect to " . $uri);
+            //     Helper::redirectTo($uri);
+            // }
 
-            if (!self::validate($password, $passwordConfirm)) {
-                Session::set("message", MSG_INVALID_PASSWORD);
-                $logger->info("invalid request parameter");
-                $logger->info("END redirect to " . $uri);
-                Helper::redirectTo($uri);
-            }
+            // if (!self::validate($password, $passwordConfirm)) {
+            //     Session::set("message", MSG_INVALID_PASSWORD);
+            //     $logger->info("invalid request parameter");
+            //     $logger->info("END redirect to " . $uri);
+            //     Helper::redirectTo($uri);
+            // }
 
-            $user = new Users();
-            try {
-                $user->register($userToken, $password);
-                $user->sendRegisterDoneMail();
-                Session::destroy();
-                Helper::redirectTo("/");
-            } catch (PDOException $e) {
-                $logger->error($e->getMessage());
-                $logger->error("END redirect to 500 internal server error");
-                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
-                exit();
-            }
+            // $user = new Users();
+            // try {
+            //     $user->register($userToken, $password);
+            //     $user->sendRegisterDoneMail();
+            //     Session::destroy();
+            //     Helper::redirectTo("/");
+            // } catch (PDOException $e) {
+            //     $logger->error($e->getMessage());
+            //     $logger->error("END redirect to 500 internal server error");
+            //     header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
+            //     exit();
+            // }
         }
 
         /**
