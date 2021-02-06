@@ -56,7 +56,8 @@
             </div>
 
             <div id="message-area" class="message-area">
-                <?= Helper::flashMessage() ?>
+                <?= $errors->get("password") ?> <br>
+                <?= $errors->get("password-confirm") ?> <br>
             </div>
 
         </div><!-- .container -->

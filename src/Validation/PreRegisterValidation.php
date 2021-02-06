@@ -6,12 +6,9 @@
     
     class PreRegisterValidation extends Validation {
 
-        protected $paramKeys = [
-            "mail"
-        ];
-
-        protected $errors = [
-            "mail" => MSG_INVALID_MAIL
+        // 想定しているリクエストパラメータのキーと適用するバリデーションルール
+        protected $rules = [
+            "mail" => "required,mail"
         ];
     }
 

@@ -22,9 +22,13 @@
             
             $logger = new Log();
             $logger->info($e->getMessage());
+            $logger->info($e->getLine());
 
             if ($e instanceof ValidationException) {
-                // ログ出力
+
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
 
                 // 入力値保持
                 foreach( $e->getParams() as $key => $value) {
@@ -32,9 +36,7 @@
                 }
 
                 // メッセージ保持
-                foreach( $e->getErrors() as $key => $value) {
-                    Session::set("message", $value);
-                }
+                $_SESSION["errors"] = $e->getErrors();
 
                 // 直前ページへリダイレクト
                 Helper::redirect($_SERVER["HTTP_REFERER"]);

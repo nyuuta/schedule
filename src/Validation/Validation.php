@@ -10,26 +10,36 @@
 
         public function validate($parameters) {
 
-            foreach( $this->paramKeys as $key ) {
+            $errors = [];
 
-                // リクエストパラメータが存在しない場合は例外
-                if ( ! array_key_exists($key, $parameters) ) {
-                    throw new Exception("Request parameters don't exist.", 500);
+            foreach($parameters as $key => $value ) {
+
+                // リクエストパラメータが各バリデーションクラスで設定したrulesで定義されていない場合は例外
+                if (!array_key_exists($key, $this->rules)) {
+                    throw new Exception("Request parameters don't match to rules.", 500);
                 }
 
-                // バリデーションルールが存在しない場合は例外
-                if ( ! is_callable(array("app\Validation\ValidationRule", $key)) ) {
-                    throw new Exception("Validation rules don't exist.", 500);
-                }
+                // ルールの取得
+                $ruleStrings = explode(",", $this->rules[$key]);
 
-                $success = ValidationRule::$key($parameters[$key]);
-                if ( $success === false ) {
-                    throw (new ValidationException(implode("\n", $this->errors), 301))
-                        ->setParams($parameters)
-                        ->setErrors($this->errors);
-                }
+                foreach($ruleStrings as $rule) {
+                    $method = explode(":", $rule)[0];
+                    $args = array_slice(explode(":", $rule), 1);
 
-                return ;
+                    if (!is_callable(array("app\Validation\ValidationRule", $method)) ) {
+                        throw new Exception("Validation rule method doesn't exist.", 500);
+                    }
+                    $error = ValidationRule::$method($parameters, $key, $args) ?? "";
+                    if ($error !== "") {
+                        $errors[$key] = $errors[$key] ?? "" . "\n" . $error;
+                    }
+                }
+            }
+
+            if ( count($errors) > 0 ) {
+                throw (new ValidationException("validation errors.", 301))
+                    ->setParams($parameters)
+                    ->setErrors($errors);
             }
         }
     }

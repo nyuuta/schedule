@@ -8,15 +8,18 @@
     use app\Auth\Authorization;
     use app\Validation\PreRegisterValidation;
     use app\model\AccountManager;
+    use app\helper\Errors;
 
     class PreRegisterController {
 
         public static function show() {
 
-            session_start();
-
             $logger = new \app\helper\Log();
             $logger->info("START PreRegisterController@show");
+
+            // エラーメッセージの取得
+            $errors = new Errors();
+            $errors->create();
 
             Authorization::checkAuth(false);
 
