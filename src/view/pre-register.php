@@ -54,7 +54,7 @@
             </div>
 
             <div id="message-area" class="message-area">
-                <?= Helper::flashMessage() ?>
+                <?= $errors->get("mail") ?>
             </div>
 
         </div><!-- .container -->

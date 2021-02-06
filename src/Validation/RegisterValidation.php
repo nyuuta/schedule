@@ -6,12 +6,10 @@
     
     class RegisterValidation extends Validation {
 
-        protected $paramKeys = [
-            "password"
-        ];
-
-        protected $errors = [
-            "password" => MSG_INVALID_PASSWORD
+        // 想定しているリクエストパラメータのキーと適用するバリデーションルール
+        protected $rules = [
+            "password" => "required,password",
+            "password-confirm" => "required,match:password"
         ];
     }
 

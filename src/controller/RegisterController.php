@@ -12,6 +12,7 @@
     use app\Auth\Authorization;
     use app\model\AccountManager;
     use app\Validation\RegisterValidation;
+    use app\helper\Errors;
 
     use PDOException;
 
@@ -19,7 +20,9 @@
 
         public static function show() {
 
-            session_start();
+            // エラーメッセージの取得
+            $errors = new Errors();
+            $errors->create();
 
             $logger = new \app\helper\Log();
             $logger->info("START RegisterController@show");
@@ -63,7 +66,10 @@
             $passwordConfirm = filter_input(INPUT_POST, "password-confirm");
 
             $validator = new RegisterValidation();
-            $validator->validate(["password" => [$password, $passwordConfirm]]);
+            $validator->validate([
+                "password" => $password,
+                "password-confirm" => $passwordConfirm
+            ]);
 
             // 本登録処理
             $manager = new AccountManager();
@@ -75,16 +81,6 @@
 
             $logger->info("END redirect to /.");
             return Helper::redirectTo("/");
-        }
-
-        /**
-         * 入力値のバリデーション
-         */
-        private static function validate($password, $passwordConfirm) {
-
-            $pattern = "/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,32}$/i";
-
-            return (preg_match($pattern, $password) && ($password == $passwordConfirm));
         }
     }
 ?>
