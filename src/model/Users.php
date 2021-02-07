@@ -16,6 +16,9 @@
         private $id;
         private $mail;
         private $password;
+        private $fault_count;
+        private $lock_expiration;
+        private $f_lock;
 
         public function __constructor($id = 0, $mail = "", $password = "") {
             $this->id = $id;
@@ -115,18 +118,7 @@
             }
         }
 
-        /**
-         * ログインを試行
-         * 
-         * @return [$success:boolean, $message:string]
-         * 
-         */
-        public function login($mail, $password) {
-
-            $success = true;
-            $message = "";
-            $this->mail = $mail;
-
+        public function getUserByMail($mail) {
             try {
                 $dbh = DB::singleton()->get();
 
@@ -135,54 +127,83 @@
                 $stmt->execute();
                 $user = $stmt->fetch();
 
-                // メールアドレスが存在しない場合は失敗
+                // メールアドレスが一致するユーザが存在しない場合は失敗
                 if ($user === false) {
-                    return [false, "fail"];
+                    return false;
                 }
 
-                // アカウントロック状態の場合は期限をチェック
-                if ($user["f_lock"] == true) {
-                    if ($user["lock_expiration"] > time()) {
-                        // ロック継続中
-                        return [false, "lock"];
-                    } else  {
-                        // アンロック
-                        $user["fault_count"] = 0;
-                        $user["f_lock"] = false;
-                        $user["lock_expiration"] = 0;
-                    }
+                $this->id = $user["id"];
+                $this->mail = $user["mail"];
+                $this->password = $user["password"];
+                $this->fault_count = $user["fault_count"];
+                $this->lock_expiration = $user["lock_expiration"];
+                $this->f_lock = (boolean)$user["f_lock"];
+
+            } catch (PDOException $e) {
+                // DB例外は利用側に例外処理を任せる
+                throw $e;
+            }
+        }
+
+        /**
+         * アカウントのロック状態をチェック
+         */
+        public function isAccountLocked() {
+            if ($this->f_lock === true) {
+                if ($this->lock_expiration > time()) {
+                    return true;
                 }
+            }
 
-                // // パスワードが不一致の場合は失敗、失敗回数を1増やす
-                if (!password_verify($password, $user["password"])) {
+            return false;
+        }
 
-                    $success = false;
-                    $message = "fail";
+        /**
+         * パスワードの照合
+         */
+        public function passwordVerify($unencryptedPassword) {
 
-                    if (++$user["fault_count"] == 10) {
-                        // ロック状態
-                        $user["f_lock"] = true;
-                        $user["lock_expiration"] = time()+30*60;
-                        $message = "lock";
+            return password_verify($unencryptedPassword, $this->password);
+        }
 
-                        $this->sendAccountLockedMail();
-                    }
-                } else {
-                    $user["fault_count"] = 0;
-                }
+        public function loginFailed() {
+            $this->fault_count++;
+            if ($this->fault_count > MAX_LOGIN_FAULT_COUNT) {
+                $this->f_lock = true;
+                $this->lock_expiration = time()+ACCOUNT_LOCK_EXPIRATION;
+            }
+
+            try {
+                $dbh = DB::singleton()->get();
 
                 // ロック・アンロック情報を更新
                 $stmt = $dbh->prepare("UPDATE users SET fault_count = ?, f_lock = ?, lock_expiration = ? WHERE mail = ?");
-                $stmt->bindValue(1, $user["fault_count"], PDO::PARAM_INT);
-                $stmt->bindValue(2, $user["f_lock"], PDO::PARAM_BOOL);
-                $stmt->bindValue(3, $user["lock_expiration"], PDO::PARAM_INT);
-                $stmt->bindValue(4, $mail, PDO::PARAM_STR);
+                $stmt->bindValue(1, $this->fault_count, PDO::PARAM_INT);
+                $stmt->bindValue(2, $this->f_lock, PDO::PARAM_BOOL);
+                $stmt->bindValue(3, $this->lock_expiration, PDO::PARAM_INT);
+                $stmt->bindValue(4, $this->mail, PDO::PARAM_STR);
                 $stmt->execute();
 
-                $this->mail = $mail;
-                $this->id = $user["id"];
+            } catch (PDOException $e) {
+                // DB例外は利用側に例外処理を任せる
+                throw $e;
+            }
+        }
 
-                return [$success, $message];
+        public function loginSuccess() {
+
+            $this->fault_count = 0;
+
+            try {
+                $dbh = DB::singleton()->get();
+
+                // ロック・アンロック情報を更新
+                $stmt = $dbh->prepare("UPDATE users SET fault_count = ?, f_lock = ?, lock_expiration = ? WHERE mail = ?");
+                $stmt->bindValue(1, $this->fault_count, PDO::PARAM_INT);
+                $stmt->bindValue(2, $this->f_lock, PDO::PARAM_BOOL);
+                $stmt->bindValue(3, $this->lock_expiration, PDO::PARAM_INT);
+                $stmt->bindValue(4, $this->mail, PDO::PARAM_STR);
+                $stmt->execute();
 
             } catch (PDOException $e) {
                 // DB例外は利用側に例外処理を任せる
