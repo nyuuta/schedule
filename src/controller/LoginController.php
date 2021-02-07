@@ -8,6 +8,7 @@
     use app\helper\CSRF;
     use app\model\PreUsers;
     use app\model\Users;
+    use app\helper\Errors;
 
     use PDOException;
     use app\Auth\Authorization;
@@ -16,7 +17,7 @@
 
         /**
          * ログイン画面を表示
-         * 既にログイン済みの場合はトップへリダイレクト
+         * ログアウト時のみリクエストを許可
          * 
          */
         public static function show() {
@@ -24,16 +25,15 @@
             $logger = new \app\helper\Log();
             $logger->info("START LoginController@show");
 
+            // エラーメッセージの取得
+            $errors = new Errors();
+            $errors->create();
+
             Authorization::checkAuth(false);
 
-            $message = Session::get("message");
-            $mail = Session::get("mail");
-
-            Session::set("message", "");
-            Session::set("mail", "");
+            $logger->info("END");
 
             include($_SERVER["DOCUMENT_ROOT"]."/src/view/login.php");
-            $logger->info("END OK");
         }
 
         public static function login() {

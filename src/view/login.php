@@ -31,7 +31,7 @@
                 <form class="form" id="form-login" method="POST" action="/login">
                     <input type="hidden" name="token" value="<?= Helper::h(CSRF::generate()) ?>"></input>
                     <div>
-                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::h($mail) ?>"></input>
+                        <input id="mail" type="text" name="mail" placeholder="メールアドレス" value="<?= Helper::old("mail") ?>"></input>
                     </div>
                     <div>
                         <input id="password" type="password" name="password" placeholder="パスワード" value=""></input>
@@ -42,8 +42,8 @@
                 </form>
             </div>
 
-            <div class="message-area">
-                <?= Helper::h($message) ?>
+            <div id="message-area" class="message-area">
+                <?= $errors->get("mail") ?>
             </div>
 
             <div>
