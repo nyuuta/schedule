@@ -1,8 +1,5 @@
 <?php
 
-    define("MSG_LOGIN_FAIL", "メールアドレスかパスワードに間違いがあります。");
-    define("MSG_LOGIN_SUCCESS", "ログインに成功しました。");
-    define("MSG_LOGIN_LOCK", "一定回数ログインに失敗しましたので、アカウントをロックしています。");
     define("MSG_PASSWORD_INCORRECT", "パスワードが違います。");
     define("MSG_REGISTERED_MAIL", "既に本登録されているメールアドレスです。");
     define("MSG_INVALID_TOKEN", "無効なトークンです。");
@@ -16,5 +13,13 @@
     define("MSG_INCORRECT_PASSWORD", "パスワードが異なります。");
     define("MSG_REQUIRED", "必須項目です。");
 
+    // ログイン処理時メッセージ
+    define("MSG_LOGIN_FAIL", "メールアドレスかパスワードに間違いがあります。");
+    define("MSG_LOGIN_SUCCESS", "ログインに成功しました。");
+    define("MSG_ACCOUNT_LOCKED", "一定回数ログインに失敗しましたので、現在アカウントをロックしています。");
+
+    // ログインの最大失敗回数とアカウントロック期限
+    define("MAX_LOGIN_FAULT_COUNT", 10);
+    define("ACCOUNT_LOCK_EXPIRATION", 60*30);
 
 ?>

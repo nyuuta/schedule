@@ -90,6 +90,55 @@
                 throw $e;
             }
         }
+
+        /**
+         * ログイン試行
+         * 
+         * ログイン可能なメールアドレスとパスワードの組み合わせかチェック
+         */
+        public function attemptLogin($mail, $password) {
+
+            $user = new Users();
+            $params = ["mail" => $mail];
+            $errors = ["mail" => MSG_LOGIN_FAIL];
+
+            try {
+                // ユーザ情報が存在しなければログイン失敗
+                if ( $user->getUserByMail($mail) === false ) {
+                    throw (new ValidationException("Target user doesn't exist.", 301))
+                        ->setParams($params)
+                        ->setErrors(["mail" => MSG_LOGIN_FAIL]);
+                }
+
+                // アカウントロック状態の場合はログイン失敗
+                if ( $user->isAccountLocked() === true ) {
+                    throw (new ValidationException("Target user's account is locked.", 301))
+                        ->setParams($params)
+                        ->setErrors(["mail" => MSG_ACCOUNT_LOCKED]);
+                }
+
+                // パスワード照合
+                if ($user->passwordVerify($password) === true) {
+                    $user->loginSuccess();
+                    Session::regenID();
+                    Session::set("userID", $user->getID());
+                } else {
+                    $user->loginFailed();
+                    if ($user->isAccountLocked() === true) {
+                        $user->sendAccountLockedMail();
+                        throw (new ValidationException("Target user's account is locked.", 301))
+                        ->setParams($params)
+                        ->setErrors(["mail" => MSG_ACCOUNT_LOCKED]);
+                    } else {
+                        throw (new ValidationException("Target user doesn't exist.", 301))
+                        ->setParams($params)
+                        ->setErrors(["mail" => MSG_LOGIN_FAIL]);
+                    }
+                }
+            } catch (PDOException | Exception $e) {
+                throw $e;
+            }
+        }
     }
 
 ?>
