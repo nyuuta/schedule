@@ -72,3 +72,39 @@
 .schedule-button-container {
     position: relative;
 }
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+
+.schedule-progress-30 {
+
+    border: 1px solid #C0C0C0;
+    background-image: linear-gradient(to right, #DDFFDD 0% 30%, white 30% 100%);
+    width: 150px;
+    height: 80%;
+    color: #888686;
+    padding-left: 10px;
+}
+
+.schedule-progress-60 {
+
+    border: 1px solid #C0C0C0;
+    background-image: linear-gradient(to right, #DDFFDD 0% 60%, white 60% 100%);
+    width: 150px;
+    height: 80%;
+    color: #888686;
+    padding-left: 10px;
+}
+
+.schedule-progress-100 {
+
+    border: 1px solid #C0C0C0;
+    background-color: #DDFFDD;
+    width: 150px;
+    height: 80%;
+    color: #888686;
+    padding-left: 10px;
+}

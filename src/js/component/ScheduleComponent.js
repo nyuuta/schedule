@@ -330,9 +330,10 @@ class ScheduleComponent extends Component {
 
         for (let schedule of this.schedulesOfSelectedDate) {
             elmStr += `
-                <div>
+                <div class="schedule-item">
                     <input type="checkbox" name="schedule" value="${schedule.id}">${escapeHTML(schedule.title)}
                     <button data-button-type="edit">編集</button>
+                    <div class="schedule-progress-30">進捗30%</div>
                 </div>
             `;
         }
