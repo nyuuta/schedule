@@ -8,6 +8,7 @@
     
     use \app\Exception\ValidationException;
     use \app\Exception\OneTimeTokenException;
+    use \app\Exception\AuthorizationException;
 
     class ExceptionHandler {
 
@@ -48,6 +49,9 @@
 
                 // 直前ページへリダイレクト
                 Helper::redirectTo("/");
+            } else if ($e instanceof AuthorizationException) {
+                // リダイレクト
+                Helper::redirectTo($e->getRedirectURI());
             }else {
                 header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
                 exit();
