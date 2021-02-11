@@ -15,6 +15,10 @@
 
     <div class="account-operation">
         
+        <div id="アカウント削除">
+            <button onclick="location.href='/main'">カレンダーへ</button>
+        </div>
+
         <?php if (Authorization::isLogin() === true) : ?>
 
             <div id="logout">
@@ -24,7 +28,7 @@
                 </form>
             </div>
 
-            <div id="アカウント削除">
+            <div id="account-delete">
                 <button onclick="location.href='/account-delete'">アカウント削除</button>
             </div>
 

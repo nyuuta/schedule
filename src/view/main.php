@@ -12,7 +12,6 @@
         <meta name="description" content="メインページ" />
 
         <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
-        <link rel="stylesheet" href="./src/css/header.css">
 
         <script src="./src/js/jquery-3.5.1.min.js"></script>
         <script src="./src/js/main.js"></script>
@@ -25,6 +24,7 @@
         <script src="./src/js/component/CalendarComponent.js"></script>
         <script src="./src/js/component/ScheduleComponent.js"></script>
 
+        <link rel="stylesheet" href="./src/css/header.css">
         <link rel="stylesheet" href="./src/css/calendar.css">
         <link rel="stylesheet" href="./src/css/schedule.css">
     </head>

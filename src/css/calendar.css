@@ -123,13 +123,13 @@
     cursor: not-allowed;
   }
 
-  button {
+.container  button {
       background-color: rgba(0, 0, 0, 0);
       border: none;
       outline: none;
   }
 
-  td.calendar-selected-date {
+.container  td.calendar-selected-date {
       background-color: #F0E68C;
   }
 
