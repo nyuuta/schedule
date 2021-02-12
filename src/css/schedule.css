@@ -79,6 +79,15 @@
     height: 30px;
 }
 
+.schedule-progress-0 {
+
+    border: 1px solid #C0C0C0;
+    width: 150px;
+    height: 80%;
+    color: #888686;
+    padding-left: 10px;
+}
+
 .schedule-progress-30 {
 
     border: 1px solid #C0C0C0;

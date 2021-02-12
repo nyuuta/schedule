@@ -170,7 +170,8 @@ class ScheduleComponent extends Component {
                     id: response.data.id,
                     title: newName,
                     date: dateStr,
-                    day: day
+                    day: day,
+                    progress: 0
                 });
 
                 _this.editType = EDITTYPE.ADD;
@@ -333,7 +334,7 @@ class ScheduleComponent extends Component {
                 <div class="schedule-item">
                     <input type="checkbox" name="schedule" value="${schedule.id}">${escapeHTML(schedule.title)}
                     <button data-button-type="edit">編集</button>
-                    <div class="schedule-progress-30">進捗30%</div>
+                    <div class="schedule-progress-${schedule.progress}">進捗${schedule.progress}%</div>
                 </div>
             `;
         }
