@@ -56,7 +56,7 @@
 
             try {
                 $dbh = DB::singleton()->get();
-                $stmt = $dbh->prepare("SELECT id, user_id, title, DATE_FORMAT(date, '%Y-%c-%e') as date FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?) AND user_id = ?");
+                $stmt = $dbh->prepare("SELECT id, user_id, title, progress, DATE_FORMAT(date, '%Y-%c-%e') as date FROM schedules where (DATE_FORMAT(date, '%Y%c') = ?) AND user_id = ?");
                 $stmt->execute(array($year.$month, $userID));
                 $response["schedules"] = self::groupSchedulesByDate($stmt->fetchAll());
                 $logger->info("END OK");
@@ -118,7 +118,7 @@
             // DBにinsert
             try {
                 $dbh = DB::singleton()->get();
-                $stmt = $dbh->prepare("INSERT INTO schedules values (0, ?, ?, ?, ?)");
+                $stmt = $dbh->prepare("INSERT INTO schedules values (0, ?, ?, ?, ?, 0)");
                 $stmt->execute(array($userID, $title, $dateStr, $day));
 
                 $response["data"]["id"] = $dbh->lastInsertId();
