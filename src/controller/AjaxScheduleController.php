@@ -245,6 +245,51 @@
             }
         }
 
+        public static function progress() {
+
+            session_start();
+
+            $logger = new \app\helper\Log();
+            $logger->info("START AjaxScheduleController@progress");
+
+            $response = array(
+                "status" => "ok",
+                "message" => "",
+                "schedules" => []
+            );
+
+            $userID = Users::getUserID();
+
+            // ログイン状態ではない場合は失敗
+            if ($userID === false) {
+                $response["status"] = "ng";
+                $response["message"] = "ログインしてください。";
+                $logger->info("END user isn't login");
+                echo(json_encode($response));
+                exit;
+            }
+
+            // パラメータ取得
+            $id = filter_input(INPUT_POST, "id");
+            $progress = filter_input(INPUT_POST, "progress");
+
+            // UPDATE
+            try {
+                $dbh = DB::singleton()->get();
+                $stmt = $dbh->prepare("UPDATE schedules SET progress = ? WHERE id = ?");
+                $stmt->execute([$progress, $id]);
+                $logger->info("END OK");
+                echo(json_encode($response));
+                exit;
+            } catch (PDOException $e) {
+                $logger->error($e->getMessage());
+                $logger->error("END");
+                header( $_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error", true, 500);
+                echo(json_encode($response));
+                exit;
+            }
+        }
+
         private static function groupSchedulesByDate($schedules) {
             $groupedSchedules = array();
             foreach ($schedules as $schedule) {

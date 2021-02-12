@@ -41,12 +41,74 @@ class ScheduleComponent extends Component {
         // 変更や削除対象のスケジュール情報
         this.selectedSchedule = [];
 
+        // 進捗度を表す値
+        this.progress = [0, 30, 60, 100];
+
         this.render();
     }
 
     initEventHandler() {
 
         let _this = this;
+
+        /**
+         * 進捗度切り替えボタンが押された場合
+         * 進捗度を変更し描画
+         */
+        this.$rootEl.on("click", "[data-switch-button]", (evt) => {
+    
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            let targetScheduleID = $(evt.currentTarget).parent().attr("data-schedule-id");
+            let newProgress = 0;
+            let targetIndex = 0;
+            $.each(_this.schedulesOfSelectedDate, function (index, schedule) {
+                if (schedule.id == targetScheduleID) {
+                    let currentProg = _this.schedulesOfSelectedDate[index].progress;
+                    switch (currentProg) {
+                        case 0:
+                            newProgress = 30;
+                            break;
+                        case 30:
+                            newProgress = 60;
+                            break;
+                        case 60:
+                            newProgress = 100;
+                            break;
+                        case 100:
+                            newProgress = 0;
+                            break;
+                    }
+
+                    targetIndex = index;
+                }
+            });
+
+            $.ajax({
+                url: "/ajax/updateScheduleProgress",
+                data: {
+                    id: targetScheduleID,
+                    progress: newProgress,
+                },
+                type: "POST",
+                dataType: "json",
+            }).done((response) => {
+    
+                if (response.status === "ng") {
+                    alert(reponse.message);
+                    return;
+                }
+
+                _this.schedulesOfSelectedDate[targetIndex].progress = newProgress;
+                _this.render();
+            }).fail(function (response) {
+                // 通信失敗時のコールバック処理
+                window.location.href = "/main";
+            }).always(function (response) {
+                // 常に実行する処理
+            });
+        });
 
         /**
          * チェックボックスに変更があった場合
@@ -331,10 +393,11 @@ class ScheduleComponent extends Component {
 
         for (let schedule of this.schedulesOfSelectedDate) {
             elmStr += `
-                <div class="schedule-item">
+                <div class="schedule-item" data-schedule-id="${schedule.id}">
                     <input type="checkbox" name="schedule" value="${schedule.id}">${escapeHTML(schedule.title)}
                     <button data-button-type="edit">編集</button>
                     <div class="schedule-progress-${schedule.progress}">進捗${schedule.progress}%</div>
+                    <button data-switch-button="">進捗切り替え</button>
                 </div>
             `;
         }
