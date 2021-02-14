@@ -55,7 +55,7 @@
             $manager->attemptLogin($mail, $password);
 
             // 処理完了メッセージをセット
-            Session::set("message", MSG_LOGIN_SUCCESS);
+            Helper::setFlashMessage(MSG_LOGIN_SUCCESS);
 
             $logger->info("END redirect to /.");
             return Helper::redirectTo("/");

@@ -34,23 +34,21 @@
             return Helper::h($old);
         }
 
-        /**
-         * フォーム入力時のエラーや処理結果をメッセージとして取得する
-         */
-        public static function flashMessage() {
+        public static function hasFlashMessage() {
+            $message = Session::get("message");
+            return !empty($message);
+        }
 
+        public static function getFlashMessage() {
             $message = Session::get("message");
             Session::unset("message");
 
             return Helper::h($message);
         }
 
-        public static function showFlashMessage() {
-            $message = Session::get("message");
-            Session::unset("message");
-            $script = "<script>alert('" . Helper::h($message) . "');</script>";
-
-            return (empty($message)) ? "" : $script;
+        public static function setFlashMessage($message) {
+            Session::set("message", $message);
+            return ;
         }
     }
 

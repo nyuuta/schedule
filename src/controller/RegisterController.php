@@ -74,10 +74,10 @@
             // 本登録処理
             $manager = new AccountManager();
             $manager->register($oneTimeToken, $password);
+            Session::destroy();
 
             // 処理完了メッセージをセット
-            Session::destroy();
-            Session::set("message", MSG_DONE_REGISTER);
+            Helper::setFlashMessage(MSG_DONE_REGISTER);
 
             $logger->info("END redirect to /.");
             return Helper::redirectTo("/");
