@@ -54,7 +54,7 @@
             $manager->preRegister($mail);
 
             // 処理完了メッセージをセット
-            Session::set("message", MSG_DONE_PREREGISTER);
+            Helper::setFlashMessage(MSG_DONE_PREREGISTER);
 
             $logger->info("END redirect to /.");
             return Helper::redirectTo("/");

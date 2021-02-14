@@ -22,4 +22,7 @@
     define("MAX_LOGIN_FAULT_COUNT", 10);
     define("ACCOUNT_LOCK_EXPIRATION", 60*30);
 
+    // アカウント削除
+    define("MSG_DONE_ACCOUNT_DELETE", "アカウントの削除が完了しました。");
+
 ?>

@@ -45,6 +45,11 @@
 
             return Helper::h($message);
         }
+
+        public static function setFlashMessage($message) {
+            Session::set("message", $message);
+            return ;
+        }
     }
 
 ?>

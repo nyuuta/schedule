@@ -79,6 +79,9 @@
                 $users = new Users();
                 $users->deleteAccount($id);
                 Session::destroy();
+
+                Helper::setFlashMessage(MSG_DONE_ACCOUNT_DELETE);
+
                 $logger->error("END OK");
                 Helper::redirectTo("/");
             } catch (PDOException $e) {
