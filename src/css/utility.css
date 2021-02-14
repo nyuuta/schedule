@@ -1,0 +1,26 @@
+.flash {
+    position: absolute;
+    z-index: 100;
+
+    display: flex;
+    align-items:center;
+    
+    height: 40px;
+
+    margin: 80px auto 0px 50px;
+    padding: 0px 15px;
+
+    border: 1px solid rgb(128, 214, 185);
+    border-radius: 5px;
+
+    background-color: rgb(137, 195, 151);
+}
+
+.flash > span {
+    font-size: 16px;
+    font-weight: 600;
+
+    color          : #ffffff;
+    
+    letter-spacing : 1px;
+}
